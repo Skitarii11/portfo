@@ -1,0 +1,9 @@
+.scroll-indicator {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%) rotate(90deg);
+    color: var(--accent-pink);
+    font-size: 0.9rem;
+    letter-spacing: 0.5em;
+}

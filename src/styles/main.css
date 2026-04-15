@@ -1,0 +1,48 @@
+/* Define color palette and fonts */
+:root {
+  --background-dark: #0a192f;
+  --background-light: #183d5d;
+  --accent-pink: #f52d6a;
+  --accent-cyan: #64ffda;
+  --text-color: #c9e3f3;
+  --font-main: 'Share Tech Mono', monospace;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  background: radial-gradient(circle, var(--background-light) 0%, var(--background-dark) 100%);
+  color: var(--text-color);
+  overflow: hidden; /* Prevent scrollbars from the main page */
+}
+
+/* Main container for the app */
+.app-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* UI Overlay will sit on top of the 3D canvas */
+.ui-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+  /* Disable pointer events on the container */
+  pointer-events: none; 
+  /* Use flexbox to position header/footer */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Re-enable pointer events for interactive elements */
+.ui-overlay a,
+.ui-overlay button {
+  pointer-events: auto;
+  cursor: pointer;
+}

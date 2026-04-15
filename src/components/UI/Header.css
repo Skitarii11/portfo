@@ -1,0 +1,62 @@
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  color: var(--accent-pink);
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  margin-left: 0.5rem;
+  font-weight: bold;
+}
+
+.hire-me-btn {
+  background-color: transparent;
+  border: 2px solid var(--accent-pink);
+  color: var(--accent-cyan);
+  padding: 0.5rem 1.5rem;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  position: relative;
+  clip-path: polygon(0 0, 100% 0, 100% 75%, 90% 100%, 0 100%);
+}
+
+.hire-me-btn .japanese-text {
+  position: absolute;
+  top: -1.2rem;
+  left: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--text-color);
+}
+
+.main-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.main-nav a {
+  color: var(--accent-cyan);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--accent-cyan);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.main-nav a:hover {
+  background-color: var(--accent-cyan);
+  color: var(--background-dark);
+}

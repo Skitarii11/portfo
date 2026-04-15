@@ -1,0 +1,46 @@
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.footer-left {
+  display: flex;
+  gap: 2rem;
+  font-size: 0.8rem;
+}
+
+.info-block span {
+  color: var(--accent-pink);
+  display: block;
+}
+.info-block p {
+  margin: 0.2rem 0 0;
+  color: var(--text-color);
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+}
+
+.contact-btn {
+  background-color: var(--accent-pink);
+  border: none;
+  color: var(--background-dark);
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.75rem 0;
+  display: flex;
+  align-items: center;
+  clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%, 0 25%);
+}
+
+.contact-btn .sound-icon {
+  background-color: var(--background-dark);
+  color: var(--accent-cyan);
+  padding: 0.5rem;
+  margin: 0 0.75rem;
+}

@@ -1,0 +1,82 @@
+.side-element {
+  width: 40px;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  /* Make sure it's above the canvas but below other interactive UI if needed */
+  z-index: 10; 
+}
+
+/* Position the containers on the left and right */
+.side-element.left {
+  left: 40px;
+}
+
+.side-element.right {
+  right: 40px;
+}
+
+/* Create the vertical lines */
+.side-element::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 90px;
+  background-color: var(--text-color);
+}
+
+/* Left side social links styling */
+.social-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.social-links a {
+  font-family: var(--font-main);
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  /* Makes text vertical */
+  writing-mode: vertical-rl; 
+  transition: all 0.2s ease-in-out;
+}
+
+.social-links a:hover {
+  color: var(--accent-cyan);
+  transform: translateY(-5px); /* Add a little hover effect */
+}
+
+
+/* Right side email styling */
+.email-link a {
+  font-family: var(--font-main);
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  writing-mode: vertical-rl;
+  transition: all 0.2s ease-in-out;
+}
+
+.email-link a:hover {
+  color: var(--accent-cyan);
+  transform: translateY(-5px);
+}
+
+/* --- Media Queries for Responsiveness --- */
+/* On smaller screens, these side elements often take up too much
+   space, so we'll hide them. */
+@media (max-width: 768px) {
+  .side-element {
+    display: none;
+  }
+}
