@@ -14,12 +14,6 @@ const Footer = () => {
           <p>Ulaanbaatar, Mongolia</p>
         </div>
       </div>
-      <div className="footer-right">
-        <button className="contact-btn">
-          <span className="sound-icon">🔊</span>
-          Contact
-        </button>
-      </div>
     </footer>
   );
 };

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { OrbitControls, TorusKnot } from '@react-three/drei';
-import * as THREE from 'three';
+import Model from './Sci-fi_computer';
 
 const Scene = () => {
   const meshRef = React.useRef();
@@ -17,12 +17,12 @@ const Scene = () => {
   return (
     <>
       {/* Lights */}
-      <ambientLight intensity={0.2} />
-      <directionalLight position={[5, 5, 5]} intensity={1} />
-      <pointLight position={[-5, -5, -5]} color="#f52d6a" intensity={2} />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[5, 10, 7.5]} intensity={1.5} />
+      <pointLight position={[-5, -5, -5]} color="#f52d6a" intensity={4} />
 
       {/* Controls */}
-      <OrbitControls enableZoom={false} enablePan={false} />
+      <OrbitControls enableZoom={true} enablePan={true} />
 
       {/* Your 3D Model */}
       <TorusKnot ref={meshRef} args={[7, 1.5, 128, 16]}>
@@ -38,8 +38,3 @@ const Scene = () => {
 };
 
 export default Scene;
-
-// To load your own model (e.g., a .glb file):
-// 1. Put your model in the `public` folder.
-// 2. Install `gltf-pipeline` to convert it to a component: npx gltf-pipeline -i model.glb -o model.js --draco.compressionLevel 10
-// 3. Import and use it in your scene.
