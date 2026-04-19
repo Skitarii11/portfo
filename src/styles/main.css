@@ -46,3 +46,28 @@ body {
   pointer-events: auto;
   cursor: pointer;
 }
+
+.about-section {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* This centers vertically */
+  align-items: center;
+  text-align: center;
+  color: var(--text-color);
+  
+  /* --- CHANGE 3: Adjust vertical alignment and add padding --- */
+  justify-content: flex-start; /* Align content to the TOP of the container */
+  padding-top: 20vh; /* Push it down from the top by 20% of the viewport height */
+}
+
+.about-section h2 {
+  font-size: 3rem;
+  color: var(--accent-cyan);
+}
+
+.about-section p {
+  font-size: 1.2rem;
+  max-width: 500px;
+}

@@ -11,7 +11,7 @@ Title: Sci-fi Computer
 import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
-export default function Model(props) {
+export default function SciFiComputer(props) {
   const { nodes, materials } = useGLTF('/sci-fi_computer-transformed.glb')
   return (
     <group {...props} dispose={null}>
