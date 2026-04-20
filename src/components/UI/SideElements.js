@@ -1,5 +1,6 @@
 import React from 'react';
 import './SideElements.css';
+import AnimatedText from './AnimatedText';
 
 const SideElements = () => {
   return (
@@ -7,16 +8,16 @@ const SideElements = () => {
       {/* Left Side Elements (Social Links) */}
       <div className="side-element left">
         <ul className="social-links">
-          <li><a href="https://github.com/Skitarii11" target="_blank" rel="noopener noreferrer">github</a></li>
-          <li><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">linkedin</a></li>
-          <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer">twitter</a></li>
+          <li><a href="https://github.com/Skitarii11" target="_blank" rel="noopener noreferrer"><AnimatedText text="github" stagger={0.2} /></a></li>
+          <li><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><AnimatedText text="linkedin" stagger={0.2} /></a></li>
+          <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><AnimatedText text="twitter" stagger={0.2} /></a></li>
         </ul>
       </div>
 
       {/* Right Side Elements (Email) */}
       <div className="side-element right">
         <div className="email-link">
-          <a href="mailto:jawhaairon1@gmail.com">jawhaairon1@gmail.com</a>
+          <a href="mailto:jawhaairon1@gmail.com"><AnimatedText text="jawhaairon1@gmail.com" stagger={0.2} /></a>
         </div>
       </div>
     </>

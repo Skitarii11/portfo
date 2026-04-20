@@ -69,7 +69,7 @@ const Experience = () => {
       </TorusKnot>
 
        <Scroll>
-          <group position={[0, 0, 0]}> {/* Position the entire indicator group */}
+          <group position={[0, 0, 0]}>
              <ScrollIndicator />
           </group>
       </Scroll>
