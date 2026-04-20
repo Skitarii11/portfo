@@ -7,13 +7,22 @@
   }
 }
 
+@keyframes letterGlow {
+  0%, 100% {
+    text-shadow: none;
+  }
+  50% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--accent-cyan);
+  }
+}
+
 .animated-letter {
   display: inline-block;
   opacity: 0;
+  animation: letterFadeIn 0.2s step-end forwards;
+}
 
-  animation-name: letterFadeIn;
-  animation-duration: 0.2s;
-  animation-timing-function: step-end;
-
-  animation-fill-mode: forwards; 
+.animated-letter.glowing {
+  animation: letterFadeIn 0.2s step-end forwards, 
+             letterGlow 1s ease-in-out;
 }
