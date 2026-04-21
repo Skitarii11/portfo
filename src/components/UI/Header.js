@@ -20,15 +20,14 @@ const Header = () => {
           </div>
         </div>
         <button className="hire-me-btn">
-            <span className="japanese-text">フリーランス</span>
-            <AnimatedText text="Hire/me" stagger={0.4} />
+            <span><AnimatedText text="Hire/me" stagger={0.4} /></span>
         </button>
       </div>
       <nav className="main-nav">
-        <a href="#home"><AnimatedText text="\home" stagger={0.4} /></a>
-        <a href="#about"><AnimatedText text="\about" stagger={0.4} /></a>
-        <a href="#work"><AnimatedText text="\work" stagger={0.4} /></a>
-        <a href="#info"><AnimatedText text="\info" stagger={0.4} /></a>
+        <a href="#home"><span><AnimatedText text="\home" stagger={0.4} /></span></a>
+        <a href="#about"><span><AnimatedText text="\about" stagger={0.4} /></span></a>
+        <a href="#work"><span><AnimatedText text="\work" stagger={0.4} /></span></a>
+        <a href="#info"><span><AnimatedText text="\info" stagger={0.4} /></span></a>
       </nav>
     </header>
   );
