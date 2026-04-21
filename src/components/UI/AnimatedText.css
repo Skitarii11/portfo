@@ -7,14 +7,17 @@
   }
 }
 
-@keyframes letterGlow {
+@keyframes letterScanGlow {
   0%, 100% {
     text-shadow: none;
+    color: inherit;
   }
   50% {
+    color: #fff; 
     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--accent-cyan);
   }
 }
+
 
 .animated-letter {
   display: inline-block;
@@ -22,7 +25,8 @@
   animation: letterFadeIn 0.2s step-end forwards;
 }
 
-.animated-letter.glowing {
-  animation: letterFadeIn 0.2s step-end forwards, 
-             letterGlow 1s ease-in-out;
+.animated-text-container.scanning .animated-letter {
+  animation:
+    letterFadeIn 0.2s step-end forwards,
+    letterScanGlow 0.5s ease-in-out;
 }

@@ -8,13 +8,13 @@ import './AnimatedText.css';
  * @param {number} [props.stagger=0.05] - The delay in seconds between each letter's animation.
  * @param {string} [props.className] - Optional additional class names for styling.
  */
-const AnimatedText = ({ 
-  text, 
-  stagger = 0.05, 
+const AnimatedText = ({
+  text,
+  stagger = 0.05,
   className = '',
   glow = true,
-  glowMinDelay = 0.5,
-  glowMaxDelay = 2.0,
+  glowMinDelay = 2.0,
+  glowMaxDelay = 5.0,
 }) => {
   const letters = text.split('');
   const containerRef = useRef(null);
@@ -22,33 +22,42 @@ const AnimatedText = ({
   useEffect(() => {
     if (!glow || !containerRef.current) return;
 
-    let glowTimeoutId;
+    let scanLoopTimeoutId;
+    let removeClassTimeoutId;
 
-    const startGlowLoop = () => {
-      const letterElements = containerRef.current.children;
-      if (letterElements.length === 0) return;
+    const startScanLoop = () => {
+      const container = containerRef.current;
+      if (!container) return;
 
-      const randomIndex = Math.floor(Math.random() * letterElements.length);
-      const randomLetter = letterElements[randomIndex];
+      // 1. ADD THE TRIGGER CLASS
+      container.classList.add('scanning');
 
-      randomLetter.classList.add('glowing');
+      // 2. CALCULATE WHEN THE SCAN WILL BE FINISHED
+      const letterGlowDuration = 0.5; // Must match the duration in CSS
+      const totalScanDuration = (letters.length * stagger + letterGlowDuration) * 1000;
 
-      setTimeout(() => {
-        randomLetter.classList.remove('glowing');
-      }, 1000);
+      // 3. SCHEDULE THE REMOVAL OF THE TRIGGER CLASS
+      removeClassTimeoutId = setTimeout(() => {
+        if (containerRef.current) { // Check if component still exists
+          containerRef.current.classList.remove('scanning');
+        }
+      }, totalScanDuration);
 
+      // 4. SCHEDULE THE NEXT SCAN AT A RANDOM INTERVAL
       const randomDelay = (Math.random() * (glowMaxDelay - glowMinDelay) + glowMinDelay) * 1000;
-      glowTimeoutId = setTimeout(startGlowLoop, randomDelay);
+      scanLoopTimeoutId = setTimeout(startScanLoop, randomDelay + totalScanDuration);
     };
 
+    // Wait for the initial typewriter animation to finish before starting the loop
     const initialAnimationDuration = (letters.length * stagger) * 1000;
-    const initialTimeoutId = setTimeout(startGlowLoop, initialAnimationDuration + 500);
+    const initialTimeoutId = setTimeout(startScanLoop, initialAnimationDuration + 1000); // 1s buffer
 
     return () => {
       clearTimeout(initialTimeoutId);
-      clearTimeout(glowTimeoutId);
+      clearTimeout(scanLoopTimeoutId);
+      clearTimeout(removeClassTimeoutId);
     };
-    
+
   }, [text, stagger, glow, glowMinDelay, glowMaxDelay]);
 
   return (
