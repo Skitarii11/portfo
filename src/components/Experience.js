@@ -1,16 +1,17 @@
 import { useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, useScroll, Scroll, TorusKnot, Text } from '@react-three/drei';
-import { useRef } from 'react';
+import { OrbitControls, useScroll, Scroll, Text } from '@react-three/drei';
+import React, { useRef, useEffect } from 'react'; 
 import * as THREE from 'three';
 
 import SciFiComputer from './3D/Sci-fi_computer';
 import ScrollIndicator from './UI/ScrollIndicator';
+import MatrixPlane from './3D/MatrixPlane';
 
 
 const Experience = () => {
   const scroll = useScroll();
   const controlsRef = useRef();
-  const torusRef = useRef();
+  const homeSectionRef = useRef();
   const computerRef = useRef();
 
   const { camera, viewport } = useThree();
@@ -25,12 +26,11 @@ const Experience = () => {
       controlsRef.current.update();
     }
 
-    const torusOpacity = 1 - scroll.range(0, 1 / 3);
+    const homeSectionOpacity = 1 - scroll.range(0, 1 / 3);
     const computerOpacity = scroll.range(1 / 3, 1 / 3);
 
-    if (torusRef.current && torusRef.current.material) {
-        torusRef.current.material.opacity = torusOpacity;
-        torusRef.current.material.transparent = true;
+    if (homeSectionRef.current && homeSectionRef.current.material) {
+        homeSectionRef.current.material.opacity = homeSectionOpacity;
     }
 
     if (computerRef.current) {
@@ -59,14 +59,11 @@ const Experience = () => {
       <pointLight position={[-5, -5, -5]} color="#FF0000" intensity={4} />
       
       {/* HOME PAGE SECTION */}
-      <TorusKnot ref={torusRef} args={[7, 1.5, 128, 16]}>
-        <meshStandardMaterial
-            color="#FF0000"
-            metalness={0.3}
-            roughness={0.5}
-            wireframe
-        />
-      </TorusKnot>
+       <MatrixPlane
+        ref={homeSectionRef}
+        width={viewport.width}
+        height={viewport.height}
+      />
 
        <Scroll>
           <group position={[0, 0, 0]}>

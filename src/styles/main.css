@@ -1,4 +1,3 @@
-/* Define color palette and fonts */
 :root {
   --background-dark: #0a192f;
   --background-light: #183d5d;
@@ -13,17 +12,15 @@ body {
   font-family: var(--font-main);
   background: radial-gradient(circle, var(--background-light) 0%, var(--background-dark) 100%);
   color: var(--text-color);
-  overflow: hidden; /* Prevent scrollbars from the main page */
+  overflow: hidden;
 }
 
-/* Main container for the app */
 .app-container {
   position: relative;
   width: 100vw;
   height: 100vh;
 }
 
-/* UI Overlay will sit on top of the 3D canvas */
 .ui-overlay {
   position: absolute;
   top: 0;
@@ -32,15 +29,13 @@ body {
   height: 100%;
   padding: 2rem;
   box-sizing: border-box;
-  /* Disable pointer events on the container */
-  pointer-events: none; 
-  /* Use flexbox to position header/footer */
+  pointer-events: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  z-index: 10;
 }
 
-/* Re-enable pointer events for interactive elements */
 .ui-overlay a,
 .ui-overlay button {
   pointer-events: auto;
@@ -52,14 +47,12 @@ body {
   width: 100vw;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* This centers vertically */
+  justify-content: center;
   align-items: center;
   text-align: center;
   color: var(--text-color);
-  
-  /* --- CHANGE 3: Adjust vertical alignment and add padding --- */
-  justify-content: flex-start; /* Align content to the TOP of the container */
-  padding-top: 20vh; /* Push it down from the top by 20% of the viewport height */
+  justify-content: flex-start;
+  padding-top: 20vh;
 }
 
 .about-section h2 {
