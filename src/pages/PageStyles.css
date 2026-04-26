@@ -1,0 +1,34 @@
+.html-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.html-overlay > div {
+  pointer-events: auto;
+}
+
+.about-section, .work-section {
+  padding-top: 20vh;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.about-section h2, .work-section h2 {
+  font-size: 3rem;
+  color: var(--accent-cyan);
+}
+
+.about-section p, .work-section p {
+  font-size: 1.2rem;
+  max-width: 500px;
+}

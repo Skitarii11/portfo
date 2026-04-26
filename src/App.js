@@ -1,34 +1,34 @@
-import React, { Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { ScrollControls } from '@react-three/drei';
-
-import Header from './components/UI/Header';
-import Footer from './components/UI/Footer';
-import SideElements from './components/UI/SideElements';
-import Experience from './components/Experience';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+import HtmlLayout from './components/HtmlLayout';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import WorkPage from './pages/WorkPage';
+import AboutPageHtml from './pages/AboutPageHtml';
+import WorkPageHtml from './pages/WorkPageHtml';
 import './styles/main.css';
 
-const handleCanvasCreated = ({ gl }) => {
-  gl.setClearColor(0x000000, 0);
-};
-
 function App() {
-  return (
-    <div className="app-container">
-      <div className="ui-overlay">
-        <Header />
-        <Footer />
-      </div>
-      <SideElements />
+   return (
+    <BrowserRouter>
+      {/* Route for the 3D content, rendered inside the main Layout */}
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<HomePage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="work" element={<WorkPage />} />
+        </Route>
+      </Routes>
 
-      <Canvas style={{ background: 'transparent' }} gl={{ alpha: true }} onCreated={handleCanvasCreated}>
-        <Suspense fallback={null}>
-          <ScrollControls pages={2} damping={0.3}>
-            <Experience />
-          </ScrollControls>
-        </Suspense>
-      </Canvas>
-    </div>
+      {/* A SECOND, parallel <Routes> block for the HTML content */}
+      <Routes>
+        <Route path="/" element={<HtmlLayout />}>
+          <Route index element={null} /> 
+          <Route path="about" element={<AboutPageHtml />} />
+          <Route path="work" element={<WorkPageHtml />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

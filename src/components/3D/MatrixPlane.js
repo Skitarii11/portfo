@@ -17,7 +17,7 @@ const MatrixPlane = React.forwardRef(({ width, height, ...props }, ref) => {
 
   const { characters, fontSize, columns } = useMemo(() => {
     const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥク0123456789';
-    const fontSize = 18;
+    const fontSize = 25;
     const columns = canvas.width / fontSize;
     context.font = `${fontSize}px monospace`;
     return { characters, fontSize, columns };
@@ -57,7 +57,7 @@ const MatrixPlane = React.forwardRef(({ width, height, ...props }, ref) => {
         const text = characters.charAt(Math.floor(Math.random() * characters.length));
         
         if (j === 0) {
-          context.fillStyle = `rgba(255, 180, 200, ${opacity})`;
+          context.fillStyle = `rgba(255, 77, 113, ${opacity})`;
         } else {
           context.fillStyle = `rgba(255, 0, 55, ${opacity})`;
         }

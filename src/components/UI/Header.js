@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Header.css';
 import AnimatedText from './AnimatedText';
 
@@ -24,10 +25,15 @@ const Header = () => {
         </button>
       </div>
       <nav className="main-nav">
-        <a href="#home"><span><AnimatedText text="\home" stagger={0.4} /></span></a>
-        <a href="#about"><span><AnimatedText text="\about" stagger={0.4} /></span></a>
-        <a href="#work"><span><AnimatedText text="\work" stagger={0.4} /></span></a>
-        <a href="#info"><span><AnimatedText text="\info" stagger={0.4} /></span></a>
+        <Link to="/">
+          <span><AnimatedText text="\home" stagger={0.4} /></span>
+        </Link>
+        <Link to="/about">
+          <span><AnimatedText text="\about" stagger={0.4} /></span>
+        </Link>
+        <Link to="/work">
+          <span><AnimatedText text="\work" stagger={0.4} /></span>
+        </Link>
       </nav>
     </header>
   );
