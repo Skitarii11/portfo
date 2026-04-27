@@ -1,6 +1,6 @@
 import React, { Suspense, useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { ScrollControls, useScroll, OrbitControls } from '@react-three/drei';
+import { ScrollControls, useScroll, OrbitControls, Text } from '@react-three/drei';
 import * as THREE from 'three';
 
 import MatrixPlane from '../components/3D/MatrixPlane';
@@ -15,6 +15,7 @@ const SceneContent = () => {
   const manRef = useRef();
   const matrixRef = useRef();
   const indicatorRef = useRef();
+  const textRef = useRef();
 
   const curve = useMemo(() => {
     const points = [
@@ -60,6 +61,16 @@ const SceneContent = () => {
         }
       });
     }
+
+    const textOpacity = scroll.curve(
+        0.4, // Start fading in at 40% of the scroll
+        0.2  // The total length of the fade in/out is 20% of the scroll
+    );
+
+    if (textRef.current) {
+      textRef.current.fillOpacity = textOpacity;
+    }
+
   });
 
   return (
@@ -80,6 +91,18 @@ const SceneContent = () => {
       <Suspense fallback={null}>
         <group position={[0, -viewport.height, 0]}>
           <WireframeMan ref={manRef} scale={1} position={[0, -6, 2]} />
+          <Text
+            ref={textRef}
+            position={[0, 0, 0]}
+            rotation={[0,45,0]}
+            fontSize={0.3}
+            color="#64ffda"
+            anchorX="left"
+            anchorY="middle"
+            fillOpacity={0}
+          >
+            {`I build immersive\nand interactive\nweb experiences.`}
+          </Text>
         </group>
       </Suspense>
     </>

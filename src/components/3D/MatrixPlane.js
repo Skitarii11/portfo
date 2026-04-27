@@ -9,15 +9,15 @@ const MatrixPlane = React.forwardRef(({ width, height, ...props }, ref) => {
   const { canvas, context, texture } = useMemo(() => {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    canvas.width = 1024;
-    canvas.height = 1024;
+    canvas.width = 2048;
+    canvas.height = 2048;
     const texture = new THREE.CanvasTexture(canvas);
     return { canvas, context, texture };
   }, []);
 
   const { characters, fontSize, columns } = useMemo(() => {
-    const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥク0123456789';
-    const fontSize = 25;
+    const characters = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnmアァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥク0123456789';
+    const fontSize = 50;
     const columns = canvas.width / fontSize;
     context.font = `${fontSize}px monospace`;
     return { characters, fontSize, columns };

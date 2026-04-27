@@ -9,8 +9,6 @@ const SideElements = () => {
       <div className="side-element left">
         <ul className="social-links">
           <li><a href="https://github.com/Skitarii11" target="_blank" rel="noopener noreferrer"><AnimatedText text="github" stagger={0.2} /></a></li>
-          <li><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><AnimatedText text="linkedin" stagger={0.2} /></a></li>
-          <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><AnimatedText text="twitter" stagger={0.2} /></a></li>
         </ul>
       </div>
 

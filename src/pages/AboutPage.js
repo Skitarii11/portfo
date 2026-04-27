@@ -5,7 +5,7 @@ const AboutPage = () => {
   return (
     <>
       <Suspense fallback={null}>
-        <SciFiComputer scale={1.5} position={[0, -1.5, 0]} />
+        <SciFiComputer scale={2} position={[-3, 0, 0]} rotation={[0.4, 0, 0]}/>
       </Suspense>
     </>
   );
