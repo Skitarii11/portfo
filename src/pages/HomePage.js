@@ -1,6 +1,7 @@
 import React, { Suspense, useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { ScrollControls, useScroll, OrbitControls, Text } from '@react-three/drei';
+import { ScrollControls, useScroll, OrbitControls, Text, Html } from '@react-three/drei';
+import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 
 import MatrixPlane from '../components/3D/MatrixPlane';
@@ -11,11 +12,14 @@ const SceneContent = () => {
   const { viewport } = useThree();
   const controlsRef = useRef();
   const scroll = useScroll();
+  const navigate = useNavigate();
 
   const manRef = useRef();
   const matrixRef = useRef();
   const indicatorRef = useRef();
-  const textRef = useRef();
+  const textRef1 = useRef();
+  const textRef2 = useRef();
+  const htmlButtonRef = useRef();
 
   const curve = useMemo(() => {
     const points = [
@@ -32,7 +36,13 @@ const SceneContent = () => {
 
   const tempTarget = useMemo(() => new THREE.Vector3(), []);
 
+  const goToAboutPage = () => {
+    navigate('/about');
+  };
+
   useFrame((state) => {
+    if (!scroll || !curve) return;
+
     curve.getPointAt(scroll.offset, state.camera.position);
 
     const lookAtProgress = scroll.range(0, 1 / 3);
@@ -52,7 +62,7 @@ const SceneContent = () => {
       });
     }
 
-    const fadeInOpacity = scroll.range(1 / 10, 1 / 2);
+    const fadeInOpacity = scroll.range(1 / 4, 1 / 2);
     if (manRef.current) {
       manRef.current.traverse(child => {
         if(child.isMesh) {
@@ -62,16 +72,31 @@ const SceneContent = () => {
       });
     }
 
-    const textOpacity = scroll.curve(
-        0.4, // Start fading in at 40% of the scroll
-        0.2  // The total length of the fade in/out is 20% of the scroll
-    );
-
-    if (textRef.current) {
-      textRef.current.fillOpacity = textOpacity;
+    const textOpacity1 = scroll.curve(0.4, 0.2);
+    if (textRef1.current) {
+      textRef1.current.fillOpacity = textOpacity1;
     }
 
+    const textOpacity2 = scroll.curve(
+        0.73,
+        0.2
+    );
+
+    if (textRef2.current) {
+      textRef2.current.fillOpacity = textOpacity2;
+    }
+
+    const buttonOpacity = scroll.curve(0.9, 0.2);
+
+    if (htmlButtonRef.current) {
+      htmlButtonRef.current.style.opacity = buttonOpacity;
+      htmlButtonRef.current.style.pointerEvents = buttonOpacity > 0.5 ? 'auto' : 'none';
+    }
   });
+
+  if (!curve) {
+    return null;
+  }
 
   return (
     <>
@@ -92,8 +117,8 @@ const SceneContent = () => {
         <group position={[0, -viewport.height, 0]}>
           <WireframeMan ref={manRef} scale={1} position={[0, -6, 2]} />
           <Text
-            ref={textRef}
-            position={[0, 0, 0]}
+            ref={textRef1}
+            position={[0, 0, 1]}
             rotation={[0,45,0]}
             fontSize={0.3}
             color="#64ffda"
@@ -101,8 +126,29 @@ const SceneContent = () => {
             anchorY="middle"
             fillOpacity={0}
           >
-            {`I build immersive\nand interactive\nweb experiences.`}
+            {`Hi, i'm Javkhlan.\nIndependent, creative\nsoftware engineer.`}
           </Text>
+
+           <Text
+            ref={textRef2}
+            position={[-2, 0, -2]}
+            rotation={[0, -45, 0]}
+            fontSize={0.3}
+            color="#64ffda"
+            anchorX="left"
+            anchorY="middle"
+            fillOpacity={0}
+          >
+            {`You are welcome\nto explore my digital space.`}
+          </Text>
+
+          <Html position={[0, 2, 3.5]}>
+            <div ref={htmlButtonRef}>
+              <button className="scene-button" onClick={goToAboutPage}>
+                EXPLORE
+              </button>
+            </div>
+          </Html>
         </group>
       </Suspense>
     </>
