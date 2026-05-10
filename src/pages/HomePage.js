@@ -62,7 +62,7 @@ const SceneContent = () => {
       });
     }
 
-    const fadeInOpacity = scroll.range(1 / 4, 1 / 2);
+    const fadeInOpacity = scroll.range(1 / 10, 1 / 2);
     if (manRef.current) {
       manRef.current.traverse(child => {
         if(child.isMesh) {
