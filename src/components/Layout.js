@@ -37,11 +37,17 @@ const TransitionOverlay = () => {
       }
       
       if (meshRef.current) {
-        // Keep the plane in front of the camera
-        const distance = 1.5; // Slightly further back to fit better
+        // Position it at a fixed distance in front of the camera
+        const distance = 1.0; // Move it further back to avoid pixelation
         const cameraDir = new THREE.Vector3(0, 0, -1).applyQuaternion(state.camera.quaternion);
         meshRef.current.position.copy(state.camera.position).add(cameraDir.multiplyScalar(distance));
         meshRef.current.quaternion.copy(state.camera.quaternion);
+
+        // Scale to fill viewport at this distance
+        const fov = state.camera.fov * (Math.PI / 180);
+        const planeHeight = 2 * Math.tan(fov / 2) * distance;
+        const planeWidth = planeHeight * (viewport.width / viewport.height);
+        meshRef.current.scale.set(planeWidth, planeHeight, 1);
       }
     }
   });
@@ -51,8 +57,8 @@ const TransitionOverlay = () => {
   return (
     <MatrixPlane 
       ref={meshRef}
-      width={viewport.width * 1.1} 
-      height={viewport.height * 1.1} 
+      width={1} 
+      height={1} 
       transparent
       opacity={opacity}
       isTransition={true}

@@ -6,8 +6,8 @@ const BrokenMirror = React.forwardRef(({ width, height, opacity = 1, isTransitio
   const { canvas, context, texture } = useMemo(() => {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    canvas.width = 1024;
-    canvas.height = 1024;
+    canvas.width = 2048;
+    canvas.height = 2048;
     const texture = new THREE.CanvasTexture(canvas);
     return { canvas, context, texture };
   }, []);
@@ -50,7 +50,7 @@ const BrokenMirror = React.forwardRef(({ width, height, opacity = 1, isTransitio
 
     // Draw lines and shards
     context.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.5})`;
-    context.lineWidth = 0.5;
+    context.lineWidth = 1.0; // Increased due to higher canvas resolution
 
     const activePoints = points.filter(p => p.sortVal < progress);
 
@@ -66,7 +66,7 @@ const BrokenMirror = React.forwardRef(({ width, height, opacity = 1, isTransitio
             if (p2.sortVal > progress) continue;
 
             const dist = Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
-            if (dist < 60) {
+            if (dist < 120) { // Scaled for higher resolution
                 // Connection (Neural Network)
                 context.beginPath();
                 context.moveTo(p1.x, p1.y);
@@ -82,7 +82,7 @@ const BrokenMirror = React.forwardRef(({ width, height, opacity = 1, isTransitio
                     const dist2 = Math.sqrt((p2.x - p3.x)**2 + (p2.y - p3.y)**2);
                     const dist3 = Math.sqrt((p1.x - p3.x)**2 + (p1.y - p3.y)**2);
                     
-                    if (dist2 < 60 && dist3 < 60) {
+                    if (dist2 < 120 && dist3 < 120) {
                         context.fillStyle = `rgba(201, 227, 243, ${opacity * 0.1})`; // var(--text-color)
                         context.beginPath();
                         context.moveTo(p1.x, p1.y);
@@ -98,7 +98,7 @@ const BrokenMirror = React.forwardRef(({ width, height, opacity = 1, isTransitio
         // Draw Dot (Neural point)
         context.fillStyle = `rgba(255, 255, 255, ${opacity})`;
         context.beginPath();
-        context.arc(p1.x, p1.y, 0.75, 0, Math.PI * 2);
+        context.arc(p1.x, p1.y, 2, 0, Math.PI * 2); // Slightly larger for better clarity
         context.fill();
     }
 
