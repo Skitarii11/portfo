@@ -48,17 +48,19 @@ const Header = () => {
         <div 
           className="explore-button-container" 
           style={{ 
-            opacity: exploreOpacity, 
-            pointerEvents: exploreOpacity > 0 ? 'auto' : 'none',
+            pointerEvents: exploreOpacity > 0.5 ? 'auto' : 'none',
             position: 'absolute',
             left: '50%',
             top: '50vh',
-            transform: 'translate(-50%, -50%)'
+            transform: 'translate(-50%, -50%) scale(2)',
+            visibility: exploreOpacity > 0.5 ? 'visible' : 'hidden'
           }}
         >
-          <button className="hire-me-btn" onClick={goToAboutPage}>
-            <span>EXPLORE</span>
-          </button>
+          {exploreOpacity > 0.5 && (
+            <button className="hire-me-btn" onClick={goToAboutPage}>
+              <span><AnimatedText text="EXPLORE" stagger={0.4} /></span>
+            </button>
+          )}
         </div>
       )}
 
