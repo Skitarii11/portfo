@@ -4,7 +4,6 @@ import { ScrollControls, useScroll, OrbitControls, Text, Html } from '@react-thr
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 
-import MatrixPlane from '../components/3D/MatrixPlane';
 import WireframeMan from '../components/3D/WireframeMan';
 import ScrollIndicator from '../components/UI/ScrollIndicator';
 
@@ -15,7 +14,6 @@ const SceneContent = () => {
   const navigate = useNavigate();
 
   const manRef = useRef();
-  const matrixRef = useRef();
   const indicatorRef = useRef();
   const textRef1 = useRef();
   const textRef2 = useRef();
@@ -54,11 +52,9 @@ const SceneContent = () => {
       controlsRef.current.update();
     }
     
-    const fadeOutOpacity = 1 - scroll.range(0.05, 1 / 3);
-    if (matrixRef.current) matrixRef.current.material.opacity = fadeOutOpacity;
     if (indicatorRef.current) {
       indicatorRef.current.traverse(child => {
-        if(child.material) child.material.opacity = fadeOutOpacity;
+        if(child.material) child.material.opacity = 1 - scroll.range(0.05, 1 / 3);
       });
     }
 
@@ -98,13 +94,6 @@ const SceneContent = () => {
     <>
       <OrbitControls ref={controlsRef} enableZoom={false} enablePan={false} enableRotate={false} />
 
-      <MatrixPlane
-        ref={matrixRef}
-        width={viewport.width}
-        height={viewport.height}
-        position={[0, 0, 0]}
-      />
-      
       <group ref={indicatorRef}>
         <ScrollIndicator />
       </group>

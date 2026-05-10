@@ -6,7 +6,7 @@ function ScrollIndicator() {
   const pink = "#f52d6a";
 
   return (
-    <group scale={0.8}>
+    <group scale={0.6}>
       {/* Shorter decorative line on the far left */}
       <mesh position={[-0.45, 1.6, 0]}>
         <planeGeometry args={[0.02, 0.8]} />
