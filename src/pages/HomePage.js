@@ -142,7 +142,7 @@ const SceneContent = () => {
             {`You are welcome\nto explore my digital space.`}
           </Text>
 
-          <Html position={[0, 2, 3.5]}>
+          <Html position={[0, 2.5, 3.5]} center transform>
             <div ref={htmlButtonRef}>
               <button className="scene-button" onClick={goToAboutPage}>
                 EXPLORE

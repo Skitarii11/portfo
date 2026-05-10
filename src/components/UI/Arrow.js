@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import { useTexture } from '@react-three/drei';
 
-function Arrow({ position, delay }) {
+function Arrow({ position, delay, color="#f52d6a"}) {
   const meshRef = useRef();
   const texture = useTexture('/arrow.png');
 
@@ -23,7 +23,7 @@ function Arrow({ position, delay }) {
       <meshBasicMaterial
         map={texture}
         transparent={true}
-        color="#FF0000"
+        color={color}
         alphaTest={0.5}
       />
     </mesh>
