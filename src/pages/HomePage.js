@@ -86,12 +86,8 @@ const SceneContent = () => {
       textRef2.current.fillOpacity = textOpacity2;
     }
 
-    const buttonOpacity = scroll.curve(0.9, 0.2);
-
-    if (htmlButtonRef.current) {
-      htmlButtonRef.current.style.opacity = buttonOpacity;
-      htmlButtonRef.current.style.pointerEvents = buttonOpacity > 0.5 ? 'auto' : 'none';
-    }
+    const buttonOpacity = scroll.range(0.9, 0.1);
+    window.dispatchEvent(new CustomEvent('explore-button-opacity', { detail: buttonOpacity }));
   });
 
   if (!curve) {
@@ -141,14 +137,6 @@ const SceneContent = () => {
           >
             {`You are welcome\nto explore my digital space.`}
           </Text>
-
-          <Html position={[0, 2.5, 3.5]} center transform>
-            <div ref={htmlButtonRef}>
-              <button className="scene-button" onClick={goToAboutPage}>
-                EXPLORE
-              </button>
-            </div>
-          </Html>
         </group>
       </Suspense>
     </>

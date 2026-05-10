@@ -155,6 +155,15 @@
 
 
 
+.hire-me-btn:hover::before {
+  background: var(--accent-pink);
+}
+
+.hire-me-btn:hover > span {
+  background: var(--accent-pink);
+  color: var(--background-dark);
+}
+
 .scene-button {
   background: transparent;
   border: 2px solid var(--accent-cyan);
@@ -169,7 +178,6 @@
   clip-path: polygon(0 0, 100% 0, 100% 100%, 15% 100%, 0 85%);
   
   transition: all 0.2s ease-in-out;
-  z-index: 10;
 }
 
 .scene-button:hover {

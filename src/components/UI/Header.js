@@ -1,9 +1,28 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Header.css';
 import AnimatedText from './AnimatedText';
 
 const Header = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [exploreOpacity, setExploreOpacity] = useState(0);
+
+  useEffect(() => {
+    const handleOpacity = (e) => {
+      setExploreOpacity(e.detail);
+    };
+
+    window.addEventListener('explore-button-opacity', handleOpacity);
+    return () => window.removeEventListener('explore-button-opacity', handleOpacity);
+  }, []);
+
+  const goToAboutPage = () => {
+    navigate('/about');
+  };
+
+  const isHome = location.pathname === '/';
+
   return (
     <header className="header-container">
       <div className="header-left">
@@ -24,6 +43,25 @@ const Header = () => {
             <span><AnimatedText text="Hire/me" stagger={0.4} /></span>
         </button>
       </div>
+
+      {isHome && (
+        <div 
+          className="explore-button-container" 
+          style={{ 
+            opacity: exploreOpacity, 
+            pointerEvents: exploreOpacity > 0 ? 'auto' : 'none',
+            position: 'absolute',
+            left: '50%',
+            top: '50vh',
+            transform: 'translate(-50%, -50%)'
+          }}
+        >
+          <button className="hire-me-btn" onClick={goToAboutPage}>
+            <span>EXPLORE</span>
+          </button>
+        </div>
+      )}
+
       <nav className="main-nav">
         <Link to="/">
           <span><AnimatedText text="\home" stagger={0.4} /></span>
