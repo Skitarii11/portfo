@@ -1,4 +1,4 @@
-import React, { Suspense, useRef, useMemo } from 'react';
+import React, { Suspense, useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { ScrollControls, useScroll, OrbitControls, Text, Html } from '@react-three/drei';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import WireframeMan from '../components/3D/WireframeMan';
 import ScrollIndicator from '../components/UI/Scrollindicator.js';
 
 const SceneContent = () => {
-  const { viewport } = useThree();
+  const { viewport, camera } = useThree();
   const controlsRef = useRef();
   const scroll = useScroll();
   const navigate = useNavigate();
@@ -18,6 +18,18 @@ const SceneContent = () => {
   const textRef1 = useRef();
   const textRef2 = useRef();
   const htmlButtonRef = useRef();
+
+  useEffect(() => {
+    return () => {
+      camera.position.set(0, 0, 5);
+      camera.rotation.set(0, 0, 0);
+      
+      if (controlsRef.current) {
+        controlsRef.current.target.set(0, 0, 0);
+        controlsRef.current.update();
+      }
+    };
+  }, [camera]);
 
   const curve = useMemo(() => {
     const points = [
