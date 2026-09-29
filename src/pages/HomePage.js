@@ -177,7 +177,7 @@ const SceneContent = () => {
 
       <GlitchBackground />
 
-      <group ref={indicatorRef} position={[0, 0, 2]}>
+      <group ref={indicatorRef} >
         <ScrollIndicator />
       </group>
       
