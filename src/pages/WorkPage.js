@@ -5,7 +5,7 @@ const WorkPage = () => {
   return (
     <>
       <Suspense fallback={null}>
-        <CyberdeckComputer scale={3} position={[0, -0.35, 4.5]} rotation={[0, 0, 0]} />
+        <CyberdeckComputer scale={3} position={[0, -0.55, 3.5]} rotation={[0, 0, 0]} /> //0, -0.35, 4.5 zoom in position
       </Suspense>
     </>
   );

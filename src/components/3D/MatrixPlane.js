@@ -1,39 +1,43 @@
-import React, { useMemo, useRef, useEffect } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const BrokenMirror = React.forwardRef(({ width, height, opacity = 1, isTransition = false, ...props }, ref) => {
+const PixelTransition = React.forwardRef(({ width, height, opacity = 1, isTransition = false, ...props }, ref) => {
   const { canvas, context, texture } = useMemo(() => {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    canvas.width = 2048;
-    canvas.height = 2048;
+    // 1024x1024 is plenty of resolution for a blocky pixel effect
+    canvas.width = 1024;
+    canvas.height = 1024;
     const texture = new THREE.CanvasTexture(canvas);
+    // Use NearestFilter to keep the pixels sharp and blocky when scaled by Three.js
+    texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
     return { canvas, context, texture };
   }, []);
 
-  // Generate a jittered grid of points
-  const points = useMemo(() => {
-    const pts = [];
-    const rows = 30;
-    const cols = 30;
+  // Generate a grid of pixel blocks
+  const blocks = useMemo(() => {
+    const blks = [];
+    const cols = 48; // Number of columns (adjust for pixel size)
+    const rows = 48; // Number of rows (adjust for pixel size)
     const cellW = canvas.width / cols;
     const cellH = canvas.height / rows;
 
-    for (let i = 0; i <= rows; i++) {
-      for (let j = 0; j <= cols; j++) {
-        pts.push({
-          baseX: j * cellW,
-          baseY: i * cellH,
-          x: j * cellW + (Math.random() - 0.5) * cellW * 0.8,
-          y: i * cellH + (Math.random() - 0.5) * cellH * 0.8,
-          phase: Math.random() * Math.PI * 2,
-          // Sort value for TL to BR progression
-          sortVal: (j / cols) + (i / rows) 
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        blks.push({
+          x: j * cellW,
+          y: i * cellH,
+          w: cellW,
+          h: cellH,
+          // Sort value for Top-Left to Bottom-Right progression + some randomness
+          // so pixels populate organically rather than in a perfect straight diagonal line
+          sortVal: (j / cols) * 0.5 + (i / rows) * 0.5 + Math.random() * 0.3
         });
       }
     }
-    return pts;
+    return blks;
   }, [canvas.width, canvas.height]);
 
   const startTime = useRef(null);
@@ -42,67 +46,38 @@ const BrokenMirror = React.forwardRef(({ width, height, opacity = 1, isTransitio
     if (startTime.current === null) startTime.current = clock.getElapsedTime();
     const elapsed = clock.getElapsedTime() - startTime.current;
     
-    // Sweep progress from 0 to 2 (to cover the whole screen TL to BR)
     const sweepDuration = isTransition ? 1.0 : 2.0;
-    const progress = Math.min(2, (elapsed / sweepDuration) * 1.5);
+    // Sweep progress goes slightly above 1 to accommodate the Math.random() offset in sortVal
+    const progress = (elapsed / sweepDuration) * 1.5;
 
     context.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Choose your pixel color here
+    context.fillStyle = `rgba(0, 0, 0, ${opacity})`;
 
-    // Draw lines and shards
-    context.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.5})`;
-    context.lineWidth = 1.0; // Increased due to higher canvas resolution
+    let activeBlocks = false;
 
-    const activePoints = points.filter(p => p.sortVal < progress);
-
-    // Simple triangulation: connect points that are close to each other in the grid
-    // For a "Broken Mirror" look, we'll draw lines between points and fill the space
-    for (let i = 0; i < points.length; i++) {
-        const p1 = points[i];
-        if (p1.sortVal > progress) continue;
-
-        // Find neighbors to connect
-        for (let j = i + 1; j < points.length; j++) {
-            const p2 = points[j];
-            if (p2.sortVal > progress) continue;
-
-            const dist = Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
-            if (dist < 120) { // Scaled for higher resolution
-                // Connection (Neural Network)
-                context.beginPath();
-                context.moveTo(p1.x, p1.y);
-                context.lineTo(p2.x, p2.y);
-                context.stroke();
-
-                // Shard fill (Mirror piece)
-                // Find a third point to form a triangle
-                for(let k = j + 1; k < points.length; k++) {
-                    const p3 = points[k];
-                    if (p3.sortVal > progress) continue;
-                    
-                    const dist2 = Math.sqrt((p2.x - p3.x)**2 + (p2.y - p3.y)**2);
-                    const dist3 = Math.sqrt((p1.x - p3.x)**2 + (p1.y - p3.y)**2);
-                    
-                    if (dist2 < 120 && dist3 < 120) {
-                        context.fillStyle = `rgba(201, 227, 243, ${opacity * 0.1})`; // var(--text-color)
-                        context.beginPath();
-                        context.moveTo(p1.x, p1.y);
-                        context.lineTo(p2.x, p2.y);
-                        context.lineTo(p3.x, p3.y);
-                        context.fill();
-                        break; // Just one triangle per edge for performance
-                    }
-                }
-            }
-        }
-
-        // Draw Dot (Neural point)
-        context.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-        context.beginPath();
-        context.arc(p1.x, p1.y, 2, 0, Math.PI * 2); // Slightly larger for better clarity
-        context.fill();
+    // Draw pixels based on progression
+    for (let i = 0; i < blocks.length; i++) {
+      const block = blocks[i];
+      
+      // If the timeline has reached this block's threshold
+      if (progress > block.sortVal) {
+        // Adding +1 to width and height prevents sub-pixel rendering gaps on the canvas
+        context.fillRect(
+            Math.floor(block.x), 
+            Math.floor(block.y), 
+            Math.ceil(block.w) + 1, 
+            Math.ceil(block.h) + 1
+        );
+        activeBlocks = true;
+      }
     }
 
-    texture.needsUpdate = true;
+    // Only update the texture if we actually drew something to save performance
+    if (activeBlocks && progress <= 1.5) {
+        texture.needsUpdate = true;
+    }
   });
 
   return (
@@ -111,7 +86,7 @@ const BrokenMirror = React.forwardRef(({ width, height, opacity = 1, isTransitio
       <meshBasicMaterial
         map={texture}
         transparent={true}
-        blending={THREE.AdditiveBlending}
+        blending={THREE.NormalBlending} 
         depthWrite={false}
         opacity={opacity}
       />
@@ -119,4 +94,4 @@ const BrokenMirror = React.forwardRef(({ width, height, opacity = 1, isTransitio
   );
 });
 
-export default BrokenMirror;
+export default PixelTransition;

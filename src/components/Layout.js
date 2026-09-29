@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import Header from './UI/Header';
 import Footer from './UI/Footer';
 import SideElements from './UI/SideElements';
-import MatrixPlane from './3D/MatrixPlane';
+import PixelTransition from './3D/MatrixPlane';
 
 const TransitionOverlay = () => {
   const { viewport } = useThree();
@@ -55,7 +55,7 @@ const TransitionOverlay = () => {
   if (opacity <= 0 && !isTransitioning) return null;
 
   return (
-    <MatrixPlane 
+    <PixelTransition 
       ref={meshRef}
       width={1} 
       height={1} 
