@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 
 import WireframeMan from '../components/3D/WireframeMan';
-import ScrollIndicator from '../components/UI/ScrollIndicator';
+import ScrollIndicator from '../components/UI/Scrollindicator.js';
 
 const SceneContent = () => {
   const { viewport } = useThree();
