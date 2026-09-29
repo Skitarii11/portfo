@@ -12,7 +12,6 @@ const GlitchBackground = () => {
 
   useFrame((state) => {
     if (materialRef.current) {
-      // Pass elapsed time into the shader for animation
       materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
     }
   });
@@ -37,50 +36,33 @@ const GlitchBackground = () => {
     void main() {
       vec2 uv = vUv;
       
-      // Quantize time to create a "steppy" digital feel instead of smooth motion
       float t = floor(uTime * 15.0); 
 
-      // 1. GLOBAL GLITCH TRIGGER
-      // This makes the glitch happen sporadically, not constantly (active ~15% of the time)
       float isGlitching = step(0.85, random(vec2(t * 0.05, 0.0))); 
       
-      // 2. HORIZONTAL TEARING (BANDS)
-      // Break the Y-axis into chunky bands
       float bandY = floor(uv.y * 40.0);
-      // Generate a random horizontal offset for each band
       float bandOffset = (random(vec2(bandY, t)) - 0.5) * 0.15;
       
-      // Apply the X offset only when glitching is active
       uv.x += bandOffset * isGlitching;
 
-      // 3. CHROMATIC ABERRATION (RGB SPLIT)
-      // Determine how far to pull apart the red and blue channels
       float rgbShift = 0.02 * random(vec2(bandY, t * 2.0)) * isGlitching;
       
-      // 4. GENERATE DIGITAL DATA BLOCKS
-      // Base background color (very dark grey-cyan)
+
       vec3 baseColor = vec3(0.02, 0.03, 0.03); 
       
-      // Create random blocks of data
       vec2 grid = floor(uv * vec2(50.0, 80.0));
       
-      // Sample blocks with RGB offsets for the chromatic glitch effect
       float rBlock = step(0.95, random(floor(vec2(uv.x + rgbShift, uv.y) * vec2(50.0, 80.0)) + t));
       float gBlock = step(0.95, random(grid + t)); // Green stays in the center
       float bBlock = step(0.95, random(floor(vec2(uv.x - rgbShift, uv.y) * vec2(50.0, 80.0)) + t));
       
-      // Combine the blocks and tint them to your theme (#64ffda / cyan)
       vec3 blockColor = vec3(rBlock, gBlock, bBlock);
       blockColor *= vec3(0.39, 1.0, 0.85); // Cyan tint
 
-      // 5. SCANLINES
-      // Add subtle CRT scanlines across the whole screen
       float scanline = sin(vUv.y * 1000.0) * 0.03;
       
-      // 6. COMPILE FINAL COLOR
       vec3 finalColor = baseColor + (blockColor * 0.8 * isGlitching) - scanline;
       
-      // Add occasional full-band bright flashes
       float flash = step(0.98, random(vec2(bandY, t))) * isGlitching;
       finalColor += vec3(0.39, 1.0, 0.85) * flash * 0.6; 
       
@@ -90,7 +72,6 @@ const GlitchBackground = () => {
 
   return (
     <mesh>
-      {/* Same large cylinder setup to enclose the scrolling camera */}
       <cylinderGeometry args={[20, 20, 100, 32, 1, true]} />
       <shaderMaterial
         ref={materialRef}
