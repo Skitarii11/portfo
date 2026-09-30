@@ -32,7 +32,7 @@ export default function SciFiComputer({ showContent = true, ...props }) {
                 I am a passionate developer creating futuristic web experiences...
               </p>
               <button className='hire-me-btn' onClick={goToSimPage}>
-                Next
+                ENTER
               </button>
             </div>
           </Html>

@@ -17,6 +17,8 @@ export default function CyberdeckComputer(props) {
   const { actions } = useAnimations(animations, group)
 
   materials.Sector7_RasPie.color.set('#818589')
+  //materials.Sector7_RasPie.wireframe = true
+  
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Sketchfab_Scene">
