@@ -3,51 +3,51 @@ import React, { useState } from 'react';
 const PROJECTS = [
   {
     id: 'proj-1',
-    title: 'SECTOR_01 // Neural Matrix',
-    description: 'Cyberpunk-styled interactive web experience built with React and Three.js canvas components.',
-    tech: ['React', 'R3F', 'Three.js', 'GLSL'],
-    demoUrl: 'https://example.com',
-    repoUrl: 'https://github.com'
+    title: 'SECTOR_01 // Blackwall IDS',
+    description: 'A modern, desktop-based Intrusion Detection System (IDS) that leverages Machine Learning to detect anomalous network behavior in real-time, including zero-day threats.',
+    tech: ['Scapy', 'Pyqt5', 'Scikit-learn', 'Mmatplotlib', 'Pandas', 'Numpy', 'Geoip2', 'Folium'],
+    demoUrl: '/',
+    repoUrl: 'https://github.com/Skitarii11/BlackWall-IDS'
   },
   {
     id: 'proj-2',
-    title: 'SECTOR_02 // Glitch Engine',
-    description: 'Custom post-processing shader pipeline and CRT screen distortion effects.',
-    tech: ['GLSL', 'WebGL', 'Three.js'],
-    demoUrl: 'https://example.com',
-    repoUrl: 'https://github.com'
+    title: 'SECTOR_02 // DX Kino',
+    description: 'Full-stack movie and series streaming application, built from the ground up to mimic the core functionalities of major platforms like Netflix.',
+    tech: ['React native', 'Expo', 'NativewInd', 'Appwrite', 'Mux'],
+    demoUrl: '/',
+    repoUrl: 'https://github.com/Skitarii11/movie-streaming-app'
   },
   {
     id: 'proj-3',
-    title: 'SECTOR_03 // Cyberdeck UI',
-    description: 'Retro-futuristic terminal portfolio template with real-time reactive audio visualizers.',
-    tech: ['React', 'Web Audio API', 'Tailwind'],
-    demoUrl: 'https://example.com',
-    repoUrl: 'https://github.com'
+    title: 'SECTOR_03 // Codebase Explainer',
+    description: 'An AI-powered tool designed to help developers navigate and understand complex GitHub repositories instantly. Instead of spending hours reading through 100+ files, users can chat with the codebase and visualize the execution flow.',
+    tech: ['LangChain', 'Streamlit', 'Mermaid.js', 'GitPython', 'Gemini API'],
+    demoUrl: '',
+    repoUrl: 'https://github.com/Skitarii11/codebase-explainer'
   },
   {
     id: 'proj-4',
-    title: 'SECTOR_04 // Neural Interface',
-    description: 'Immersive virtual reality interface for neurofeedback applications.',
-    tech: ['React', 'A-Frame', 'WebXR'],
-    demoUrl: 'https://example.com',
-    repoUrl: 'https://github.com'
+    title: 'SECTOR_04 // MERN Chat App',
+    description: 'This is a full-stack chat application built using the MERN stack. Users can sign up, log in, and chat in real-time with other users.',
+    tech: ['React', 'MongoDB', 'Express', 'Node.js', 'Socket.io', 'JWT', 'Bcrypt','Vite', 'TailwindCSS', 'DaisyUI','Zustand','React Hot Toast'],
+    demoUrl: '',
+    repoUrl: 'https://github.com/Skitarii11/mern-chat-app'
   },
   {
     id: 'proj-5',
-    title: 'SECTOR_05 // Data Stream',
-    description: 'Real-time data visualization platform for financial market analysis.',
-    tech: ['React', 'D3.js', 'WebSocket'],
-    demoUrl: 'https://example.com',
-    repoUrl: 'https://github.com'
+    title: 'SECTOR_05 // Solar System Simulation',
+    description: 'The Solar-System Simulation Project is a website that allows you to simulate the motion of planets in our solar system. It provides an interactive and educational experience, allowing users to visualize the orbits and movements of celestial bodies.',
+    tech: ['Three.js', 'Vite'],
+    demoUrl: '',
+    repoUrl: 'https://github.com/Skitarii11/Sol'
   },
   {
     id: 'proj-6',
-    title: 'SECTOR_06 // Holographic Display',
-    description: 'Interactive 3D holographic projection system for immersive presentations.',
-    tech: ['React', 'Three.js', 'WebGL'],
-    demoUrl: 'https://example.com',
-    repoUrl: 'https://github.com'
+    title: 'SECTOR_06 // Biome cubes',
+    description: 'Rubiks cube Biome is a webapp that allows you to manipulate rubiks cube with mini 3D biomes.',
+    tech: ['Three.js', 'TWEEN.js', 'Vite'],
+    demoUrl: '',
+    repoUrl: 'https://github.com/Skitarii11/Biome-cubes'
   }
 ];
 
