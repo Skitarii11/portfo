@@ -16,7 +16,7 @@ const AnimatedSciFiComputer = () => {
       rotation: [0.3, 0, 0],
     },
     delay: 2000,
-    config: { duration: 3000 },
+    config: { duration: 1000 },
     onRest: () => {
       setShowContent(true);
     },

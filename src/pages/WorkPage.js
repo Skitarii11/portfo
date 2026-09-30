@@ -15,7 +15,7 @@ const AnimatedCyberdeck = () => {
       rotation: [0, 0, 0],
     },
     delay: 2000,
-    config: { duration: 3000 },
+    config: { duration: 1000 },
     onRest: () => {
       const work = document.getElementsByClassName('work-section')[0];
       work.style.display = 'flex';
