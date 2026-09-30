@@ -22,6 +22,7 @@ const Header = () => {
   };
 
   const isHome = location.pathname === '/';
+  const isAbout = location.pathname === '/about';
 
   return (
     <header className="header-container">

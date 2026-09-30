@@ -161,3 +161,53 @@
 .screen-panel::-webkit-scrollbar-thumb {
   background: rgba(0, 240, 255, 0.3);
 }
+
+
+
+
+.computer-screen-wrapper {
+  user-select: none;
+  pointer-events: auto;
+}
+
+.screen-inner {
+  width: 320px;
+  height: 220px;
+  padding: 1rem;
+  box-sizing: border-box;
+  color: var(--accent-cyan, #00f0ff);
+  font-family: monospace;
+  text-align: center;
+  overflow-y: auto;
+  /* Optional CRT effect */
+  text-shadow: 0 0 5px rgba(0, 240, 255, 0.7);
+}
+
+.screen-inner h2 {
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+  color: #ffffff;
+}
+
+.screen-inner p {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 0.6rem;
+  color: #cceeff;
+}
+
+.screen-inner button {
+  margin: 1rem;
+  width: 30%;
+  height: 2rem;
+  cursor: pointer;
+}
+
+/* Custom scrollbar for 3D screen */
+.screen-inner::-webkit-scrollbar {
+  width: 4px;
+}
+.screen-inner::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.5);
+}

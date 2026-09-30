@@ -1,9 +1,11 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import SciFiComputer from '../components/3D/Sci-fi_computer';
 import GlitchBackground from '../components/3D/GlitchBG.js';
 import { useSpring, animated } from '@react-spring/three';
 
 const AnimatedSciFiComputer = () => {
+  const [showContent, setShowContent] = useState(false);
+
   const springs = useSpring({
     from: {
       position: [-3, 0, 0],
@@ -16,8 +18,8 @@ const AnimatedSciFiComputer = () => {
     delay: 2000,
     config: { duration: 3000 },
     onRest: () => {
-
-    }
+      setShowContent(true);
+    },
   });
 
   return (
@@ -26,7 +28,7 @@ const AnimatedSciFiComputer = () => {
       position={springs.position}
       rotation={springs.rotation}
     >
-      <SciFiComputer />
+      <SciFiComputer showContent={showContent} />
     </animated.group>
   );
 };

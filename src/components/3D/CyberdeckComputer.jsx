@@ -16,6 +16,7 @@ export default function CyberdeckComputer(props) {
   const { nodes, materials, animations } = useGLTF('/cyberdeck_computer-transformed.glb')
   const { actions } = useAnimations(animations, group)
 
+  materials.Sector7_RasPie.color.set('#818589')
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Sketchfab_Scene">
