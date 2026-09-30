@@ -79,6 +79,6 @@ const GlitchBackground = () => {
       />
     </mesh>
   );
-}; // ['#4deeea', '#f52d6a', '#64ffda']
+};
 
 export default GlitchBackground;

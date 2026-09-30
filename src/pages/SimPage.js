@@ -2,7 +2,6 @@ import React, { Suspense, useMemo, useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { PointerLockControls, Html } from '@react-three/drei';
 import * as THREE from 'three';
-import GlitchBackground from '../components/3D/GlitchBG'
 
 
 const usePlayerControls = () => {
