@@ -1,13 +1,42 @@
 import React, { Suspense } from 'react';
 import SciFiComputer from '../components/3D/Sci-fi_computer';
 import GlitchBackground from '../components/3D/GlitchBG.js';
+import { useSpring, animated } from '@react-spring/three';
+
+const AnimatedSciFiComputer = () => {
+  const springs = useSpring({
+    from: {
+      position: [-3, 0, 0],
+      rotation: [0.4, 0, 0],
+    },
+    to: {
+      position: [0, -0.6, 3.5],
+      rotation: [0.3, 0, 0],
+    },
+    delay: 2000,
+    config: { duration: 3000 },
+    onRest: () => {
+
+    }
+  });
+
+  return (
+    <animated.group
+      scale={3}
+      position={springs.position}
+      rotation={springs.rotation}
+    >
+      <SciFiComputer />
+    </animated.group>
+  );
+};
 
 const AboutPage = () => {
   return (
     <>
       <GlitchBackground />
       <Suspense fallback={null}>
-        <SciFiComputer scale={2} position={[-3, 0, 0]} rotation={[0.4, 0, 0]}/>
+        <AnimatedSciFiComputer />
       </Suspense>
     </>
   );
