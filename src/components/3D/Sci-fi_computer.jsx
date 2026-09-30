@@ -11,8 +11,8 @@ export default function SciFiComputer({ showContent = true, ...props }) {
 
   const navigate = useNavigate();
 
-  const goToWorkPage = () =>{
-    navigate('/work');
+  const goToSimPage = () =>{
+    navigate('/sim');
   }
 
   return (
@@ -31,8 +31,8 @@ export default function SciFiComputer({ showContent = true, ...props }) {
               <p>
                 I am a passionate developer creating futuristic web experiences...
               </p>
-              <button className='hire-me-btn' onClick={goToWorkPage}>
-                work
+              <button className='hire-me-btn' onClick={goToSimPage}>
+                Next
               </button>
             </div>
           </Html>

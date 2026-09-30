@@ -7,6 +7,7 @@ import WorkPage from './pages/WorkPage';
 import AboutPageHtml from './pages/AboutPageHtml';
 import WorkPageHtml from './pages/WorkPageHtml';
 import './styles/main.css';
+import SimPage from './pages/SimPage';
 
 function App() {
    return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />
+          <Route path="sim" element={<SimPage />} />
           <Route path="work" element={<WorkPage />} />
         </Route>
       </Routes>
