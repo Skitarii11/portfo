@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import SciFiComputer from '../components/3D/Sci-fi_computer';
-import GlitchBackground from './HomePage';
+import GlitchBackground from '../components/3D/GlitchBG.js';
 
 const AboutPage = () => {
   return (

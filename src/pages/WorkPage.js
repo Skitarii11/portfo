@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import CyberdeckComputer from '../components/3D/CyberdeckComputer';
-import GlitchBackground from './HomePage';
+import GlitchBackground from '../components/3D/GlitchBG.js';
 
 const WorkPage = () => {
   return (
