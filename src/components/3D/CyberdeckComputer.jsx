@@ -15,6 +15,7 @@ export default function CyberdeckComputer(props) {
   const group = React.useRef()
   const { nodes, materials, animations } = useGLTF('/cyberdeck_computer-transformed.glb')
   const { actions } = useAnimations(animations, group)
+
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Sketchfab_Scene">

@@ -3,12 +3,36 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { ScrollControls, useScroll, OrbitControls, Text } from '@react-three/drei';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
+import { useSpring, animated } from '@react-spring/three';
 
 import WireframeMan from '../components/3D/WireframeMan';
 import ScrollIndicator from '../components/UI/Scrollindicator.js';
 import GlitchBackground from '../components/3D/GlitchBG.js';
 
+const AnimatedArrow = () => {
+  const springs = useSpring({
+    from: {
+      position: [0, 1, 0],
+      rotation: [0, 0, 0],
+    },
+    to: {
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+    },
+    loop: true,
+    config: { duration: 1000 },
+  });
 
+  return (
+    <animated.group
+      scale={1}
+      position={springs.position}
+      rotation={springs.rotation}
+    >
+      <ScrollIndicator />
+    </animated.group>
+  );
+}
 const SceneContent = () => {
   const { viewport, camera } = useThree();
   const controlsRef = useRef();
@@ -100,7 +124,7 @@ const SceneContent = () => {
       <GlitchBackground />
 
       <group ref={indicatorRef} >
-        <ScrollIndicator />
+        <AnimatedArrow />
       </group>
       
       <Suspense fallback={null}>

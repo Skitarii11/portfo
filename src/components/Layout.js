@@ -79,7 +79,7 @@ const Layout = () => {
       {/* Persistent 3D Canvas */}
       <Canvas gl={{ alpha: true }}>
         <ambientLight intensity={0.5} />
-        <directionalLight position={[5, 5, 5]} intensity={1.5} />
+        <directionalLight position={[5, 5, 5]} intensity={3} />
         
         <TransitionOverlay />
 

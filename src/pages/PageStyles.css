@@ -4,31 +4,160 @@
   left: 0;
   width: 100%;
   height: 100%;
-  padding: 2rem;
+  padding: 0;
   box-sizing: border-box;
   pointer-events: none;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+  justify-content: center;
 }
+
 
 .html-overlay > div {
   pointer-events: auto;
 }
 
-.about-section, .work-section {
-  padding-top: 20vh;
-  text-align: center;
-  color: var(--text-color);
+/* Dual Screen Grid Layout */
+.work-section {
+  display: none;
+  justify-content: space-between;
+  width: 85vw;
+  max-width: 1400px;
+  height: 32vh;
+  margin-top: 20vh;
+  gap: 7vw;
+  box-sizing: border-box;
 }
 
-.about-section h2, .work-section h2 {
-  font-size: 3rem;
-  color: var(--accent-cyan);
+.screen-panel {
+  flex: 1;
+  height: 100%;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  text-align: left;
 }
 
-.about-section p, .work-section p {
-  font-size: 1.2rem;
-  max-width: 500px;
+.panel-header {
+  font-size: 0.85rem;
+  color: var(--accent-cyan, #00f0ff);
+  margin: 0 0 0.8rem 0;
+  letter-spacing: 1px;
+  border-bottom: 1px dashed rgba(0, 240, 255, 0.3);
+  padding-bottom: 0.3rem;
+}
+
+/* Left Screen - Project List */
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.project-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #a0a0a0;
+  font-family: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.project-btn:hover {
+  color: #fff;
+  background: rgba(0, 240, 255, 0.1);
+}
+
+.project-btn.active {
+  color: var(--accent-cyan, #00f0ff);
+  border-left: 2px solid var(--accent-cyan, #00f0ff);
+  background: rgba(0, 240, 255, 0.15);
+  font-weight: bold;
+}
+
+.project-btn .arrow {
+  color: var(--accent-cyan, #00f0ff);
+  font-size: 0.9rem;
+}
+
+/* Right Screen - Project Details */
+.project-details {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.details-title {
+  font-size: 1.1rem;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+}
+
+.details-desc {
+  font-size: 0.85rem;
+  color: #cccccc;
+  line-height: 1.4;
+  margin: 0 0 1rem 0;
+}
+
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  font-size: 0.7rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #00f0ff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+}
+
+.details-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.cyber-btn {
+  font-size: 0.8rem;
+  color: var(--accent-cyan, #00f0ff);
+  text-decoration: none;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: opacity 0.2s ease;
+}
+
+.cyber-btn:hover {
+  opacity: 0.7;
+}
+
+.left-panel {
+  padding-left: 2rem;
+  padding-right: 1rem;
+}
+
+/* Right Screen Specific Adjustment */
+.right-panel {
+  padding-top: 2.2rem;
+  padding-left: 1.5rem;
+  padding-right: 2rem;
+}
+
+/* Custom Scrollbar for inner screen panels */
+.screen-panel::-webkit-scrollbar {
+  width: 4px;
+}
+.screen-panel::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.3);
 }
