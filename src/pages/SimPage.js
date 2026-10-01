@@ -1,8 +1,8 @@
 import React, { Suspense, useMemo, useRef, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { PointerLockControls, Html } from '@react-three/drei';
+import { Html } from '@react-three/drei';
+import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls.js';
 import * as THREE from 'three';
-
 
 const usePlayerControls = () => {
   const [movement, setMovement] = useState({ forward: false, backward: false, left: false, right: false });
@@ -39,12 +39,34 @@ const usePlayerControls = () => {
 
 // --- First Person Camera Controller ---
 const FpsController = () => {
-  const { camera } = useThree();
+  const { camera, gl } = useThree();
+  const controlsRef = useRef();
+  const [isLocked, setIsLocked] = useState(false);
+
   const { forward, backward, left, right } = usePlayerControls();
   const direction = new THREE.Vector3();
   const speed = 15;
 
+  useEffect(() => {
+    const controls = new PointerLockControlsImpl(camera, gl.domElement);
+    controlsRef.current = controls;
+
+    const onLock = () => setIsLocked(true);
+    const onUnlock = () => setIsLocked(false);
+
+    controls.addEventListener('lock', onLock);
+    controls.addEventListener('unlock', onUnlock);
+
+    return () => {
+      controls.removeEventListener('lock', onLock);
+      controls.removeEventListener('unlock', onUnlock);
+      controls.dispose();
+    };
+  }, [camera, gl.domElement]);
+
   useFrame((state, delta) => {
+    if (!isLocked) return;
+
     direction.z = Number(forward) - Number(backward);
     direction.x = Number(right) - Number(left);
     direction.normalize();
@@ -57,19 +79,42 @@ const FpsController = () => {
 
   return (
     <>
-      <PointerLockControls />
-      <Html center wrapperClass="crosshair-ui" style={{ pointerEvents: 'none', color: '#00f0ff', fontFamily: 'monospace' }}>
-        <div style={{ textAlign: 'center', background: 'rgba(0,0,0,0.5)', padding: '10px', borderRadius: '5px' }}>
-          [ CLICK TO ENTER CYBERSPACE ] <br/>
-          W A S D to Move
-        </div>
-      </Html>
+      {!isLocked && (
+        <Html center wrapperClass="crosshair-ui">
+          <div 
+            onClick={(e) => {
+              e.stopPropagation();
+              controlsRef.current?.lock();
+            }}
+            style={{ 
+              textAlign: 'center', 
+              background: 'rgba(5, 5, 10, 0.85)', 
+              padding: '16px 28px', 
+              borderRadius: '6px',
+              border: '1px solid #00f0ff',
+              color: '#00f0ff', 
+              fontFamily: 'monospace',
+              cursor: 'pointer',
+              pointerEvents: 'auto',
+              userSelect: 'none',
+              boxShadow: '0 0 20px rgba(0, 240, 255, 0.25)'
+            }}
+          >
+            <div style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '6px' }}>
+              [ CLICK TO ENTER CYBERSPACE ]
+            </div>
+            <div style={{ fontSize: '0.8rem', color: '#818589' }}>
+              W A S D to Move | ESC to Exit
+            </div>
+          </div>
+        </Html>
+      )}
     </>
   );
 };
 
 const DynamicBlocks = () => {
-  const gridSize = 40;
+  const gridSize = 80;
   const count = gridSize * gridSize * 2;
   const meshSolidRef = useRef();
   const meshWireRef = useRef();
@@ -124,13 +169,11 @@ const DynamicBlocks = () => {
 
   return (
     <group>
-      {/* Black solid core for the blocks */}
       <instancedMesh ref={meshSolidRef} args={[null, null, count]}>
         <boxGeometry />
         <meshBasicMaterial color="#05050a" />
       </instancedMesh>
       
-      {/* Glowing colored wireframe edges wrapping the cores */}
       <instancedMesh ref={meshWireRef} args={[null, null, count]}>
         <boxGeometry />
         <meshBasicMaterial 
