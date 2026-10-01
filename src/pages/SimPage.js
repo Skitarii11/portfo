@@ -8,31 +8,31 @@ const INTERACTABLES = [
   {
     id: 1,
     position: [-15, 2, -15],
-    title: "// SYSTEM_LOG_01",
+    title: "// WHO I AM",
     text: "Neural synchronization completed at 98.4%. Primary render matrix online and functioning within nominal cyber-parameters."
   },
   {
     id: 2,
     position: [15, 2, -20],
-    title: "// PROJECT_NEXUS",
+    title: "// EXPERIENCE",
     text: "Decentralized WebGL graphics pipeline initialized. Real-time procedural geometry streaming across sector 07."
   },
   {
     id: 3,
     position: [0, 2, -35],
-    title: "// ARCHIVE_DATA",
+    title: "// SKILLS",
     text: "Simulated reality framework executed inside React Three Fiber. Dynamic instantiation handling 12,800 active nodes."
   },
   {
     id: 4,
     position: [-22, 2, 10],
-    title: "// TELEMETRY_04",
+    title: "// EDUCATION",
     text: "Quantum state vectors stable. Shaders compiling across grid coordinates with minimal fragment distortion."
   },
   {
     id: 5,
     position: [20, 2, 15],
-    title: "// TERMINAL_OVERRIDE",
+    title: "// RESUME",
     text: "",
     image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop"
   }
