@@ -21,7 +21,7 @@ const INTERACTABLES = [
     id: 3,
     position: [0, 2, -35],
     title: "// SKILLS",
-    text: "Simulated reality framework executed inside React Three Fiber. Dynamic instantiation handling 12,800 active nodes."
+    text: "React Three.js Python Git ReactNative TypeScript Node.js Express.js SQL NoSQL RestAPI CI/CD Tanstack Cybersecurity"
   },
   {
     id: 4,
@@ -113,6 +113,143 @@ const GlitchBlockMaterial = () => {
   );
 };
 
+const SkillsNodeGraph = ({ text }) => {
+  const linesRef = useRef();
+  const nodeRefs = useRef([]);
+  const { nodes, connections, initialLinePositions } = useMemo(() => {
+    const skills = text.split(' ');
+    const count = skills.length;
+    const phi = Math.PI * (3 - Math.sqrt(5));
+
+    const nodeList = skills.map((skill, i) => {
+      const y = 1 - (i / (count - 1)) * 2;
+      const radius = Math.sqrt(1 - y * y) * 4.5;
+      const theta = phi * i;
+
+      const x = Math.cos(theta) * radius;
+      const z = Math.sin(theta) * radius;
+
+      return {
+        id: i,
+        label: skill,
+        basePos: new THREE.Vector3(x, y * 2.5, z),
+        currentPos: new THREE.Vector3(x, y * 2.5, z),
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.6 + Math.random() * 0.6
+      };
+    });
+
+    const edgeList = [];
+    for (let i = 0; i < count; i++) {
+      for (let j = i + 1; j < count; j++) {
+        const dist = nodeList[i].basePos.distanceTo(nodeList[j].basePos);
+        if (dist < 4.2) {
+          edgeList.push([i, j]);
+        }
+      }
+    }
+
+    const lineArray = new Float32Array(edgeList.length * 2 * 3);
+
+    return { nodes: nodeList, connections: edgeList, initialLinePositions: lineArray };
+  }, [text]);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    nodes.forEach((node, idx) => {
+      node.currentPos.x = node.basePos.x + Math.sin(t * node.speed + node.phase) * 0.35;
+      node.currentPos.y = node.basePos.y + Math.cos(t * node.speed * 0.8 + node.phase) * 0.35;
+      node.currentPos.z = node.basePos.z + Math.sin(t * node.speed * 0.5 + node.phase) * 0.35;
+
+      if (nodeRefs.current[idx]) {
+        nodeRefs.current[idx].position.copy(node.currentPos);
+      }
+    });
+
+    if (linesRef.current) {
+      const posAttr = linesRef.current.geometry.attributes.position;
+      let ptr = 0;
+
+      connections.forEach(([i, j]) => {
+        const p1 = nodes[i].currentPos;
+        const p2 = nodes[j].currentPos;
+
+        posAttr.array[ptr++] = p1.x;
+        posAttr.array[ptr++] = p1.y;
+        posAttr.array[ptr++] = p1.z;
+        posAttr.array[ptr++] = p2.x;
+        posAttr.array[ptr++] = p2.y;
+        posAttr.array[ptr++] = p2.z;
+      });
+
+      posAttr.needsUpdate = true;
+    }
+  });
+
+  return (
+    <group>
+      <Html position={[0, 4.2, 0]} center style={{ pointerEvents: 'none' }}>
+        <div style={{
+          background: 'rgba(3, 20, 28, 0.9)',
+          border: '1px solid #00f0ff',
+          padding: '6px 14px',
+          borderRadius: '4px',
+          color: '#ffffff',
+          fontFamily: 'monospace',
+          fontSize: '0.85rem',
+          fontWeight: 'bold',
+          letterSpacing: '1px',
+          boxShadow: '0 0 15px rgba(0,240,255,0.4)',
+          whiteSpace: 'nowrap'
+        }}>
+          // SKILLS_MATRIX [ PRESS E TO CLOSE ]
+        </div>
+      </Html>
+
+      <lineSegments ref={linesRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={connections.length * 2}
+            array={initialLinePositions}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial color="#00f0ff" transparent opacity={0.5} />
+      </lineSegments>
+      {nodes.map((node, idx) => (
+        <group
+          key={node.id}
+          ref={(el) => (nodeRefs.current[idx] = el)}
+          position={node.basePos.toArray()}
+        >
+          <mesh>
+            <boxGeometry args={[0.35, 0.35, 0.35]} />
+            <meshBasicMaterial wireframe color="#00f0ff" />
+          </mesh>
+          <Html center distanceFactor={8} style={{ pointerEvents: 'none' }}>
+            <div style={{
+              background: 'rgba(5, 15, 25, 0.95)',
+              border: '1px solid #00f0ff',
+              color: '#00f0ff',
+              padding: '4px 8px',
+              borderRadius: '3px',
+              fontFamily: 'monospace',
+              fontSize: '0.75rem',
+              fontWeight: 'bold',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 0 10px rgba(0, 240, 255, 0.35)',
+              backdropFilter: 'blur(4px)'
+            }}>
+              {node.label}
+            </div>
+          </Html>
+        </group>
+      ))}
+    </group>
+  );
+};
+
 const usePlayerControls = () => {
   const [movement, setMovement] = useState({ forward: false, backward: false, left: false, right: false });
   
@@ -186,6 +323,7 @@ const InteractableObjects = ({ onNearChange }) => {
     <group>
       {INTERACTABLES.map((item) => {
         const isOpen = activeNodes[item.id];
+        const isSkillsNode = item.id === 3 || item.title.includes('SKILLS');
 
         return (
           <group key={item.id} position={item.position}>
@@ -193,9 +331,8 @@ const InteractableObjects = ({ onNearChange }) => {
               <group>
                 <mesh>
                   <boxGeometry args={[4, 10, 4]} />
-                  <meshBasicMaterial wireframe={true} color="#ffffff" />
+                  <meshBasicMaterial wireframe color="#ffffff" />
                 </mesh>
-
                 <mesh>
                   <boxGeometry args={[3.95, 9.95, 3.95]} />
                   <GlitchBlockMaterial />
@@ -203,7 +340,11 @@ const InteractableObjects = ({ onNearChange }) => {
               </group>
             )}
 
-            {isOpen && (
+            {isOpen && isSkillsNode && (
+              <SkillsNodeGraph text={item.text} />
+            )}
+
+            {isOpen && !isSkillsNode && (
               <Html
                 transform
                 distanceFactor={6}
@@ -263,9 +404,12 @@ const InteractableObjects = ({ onNearChange }) => {
                     </div>
                   )}
 
-                  <p style={{ fontSize: '0.8rem', lineHeight: '1.4', margin: 0, color: '#cceeff' }}>
-                    {item.text}
-                  </p>
+                  {item.text && (
+                    <p style={{ fontSize: '0.8rem', lineHeight: '1.4', margin: 0, color: '#cceeff' }}>
+                      {item.text}
+                    </p>
+                  )}
+
                   <div style={{ fontSize: '0.65rem', color: '#f52d6a', marginTop: '10px', textAlign: 'right' }}>
                     [ PRESS E TO CLOSE ]
                   </div>
