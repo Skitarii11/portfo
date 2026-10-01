@@ -4,6 +4,40 @@ import { Html } from '@react-three/drei';
 import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls.js';
 import * as THREE from 'three';
 
+const INTERACTABLES = [
+  {
+    id: 1,
+    position: [-15, 2, -15],
+    title: "// SYSTEM_LOG_01",
+    text: "Neural synchronization completed at 98.4%. Primary render matrix online and functioning within nominal cyber-parameters."
+  },
+  {
+    id: 2,
+    position: [15, 2, -20],
+    title: "// PROJECT_NEXUS",
+    text: "Decentralized WebGL graphics pipeline initialized. Real-time procedural geometry streaming across sector 07."
+  },
+  {
+    id: 3,
+    position: [0, 2, -35],
+    title: "// ARCHIVE_DATA",
+    text: "Simulated reality framework executed inside React Three Fiber. Dynamic instantiation handling 12,800 active nodes."
+  },
+  {
+    id: 4,
+    position: [-22, 2, 10],
+    title: "// TELEMETRY_04",
+    text: "Quantum state vectors stable. Shaders compiling across grid coordinates with minimal fragment distortion."
+  },
+  {
+    id: 5,
+    position: [20, 2, 15],
+    title: "// TERMINAL_OVERRIDE",
+    text: "",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop"
+  }
+];
+
 const usePlayerControls = () => {
   const [movement, setMovement] = useState({ forward: false, backward: false, left: false, right: false });
   
@@ -37,17 +71,140 @@ const usePlayerControls = () => {
   return movement;
 };
 
-// --- First Person Camera Controller ---
+const InteractableObjects = ({ onNearChange }) => {
+  const { camera } = useThree();
+  const [activeNodes, setActiveNodes] = useState({});
+  const nearestRef = useRef(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.code === 'KeyE' && nearestRef.current !== null) {
+        const id = nearestRef.current;
+        setActiveNodes((prev) => ({ ...prev, [id]: !prev[id] }));
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useFrame(() => {
+    let closestId = null;
+    let minDistance = 7;
+
+    INTERACTABLES.forEach((item) => {
+      const itemPos = new THREE.Vector3(...item.position);
+      const dist = camera.position.distanceTo(itemPos);
+
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestId = item.id;
+      }
+    });
+
+    if (nearestRef.current !== closestId) {
+      nearestRef.current = closestId;
+      onNearChange(closestId);
+    }
+  });
+
+  return (
+    <group>
+      {INTERACTABLES.map((item) => {
+        const isOpen = activeNodes[item.id];
+
+        return (
+          <group key={item.id} position={item.position}>
+            {!isOpen && (
+              <mesh>
+                <boxGeometry args={[4, 10, 4]} />
+                <meshBasicMaterial wireframe={true} color="#ffffff" />
+              </mesh>
+            )}
+
+            {isOpen && (
+              <Html
+                transform
+                distanceFactor={6}
+                position={[0, 0, 0]}
+                style={{ pointerEvents: 'none' }}
+              >
+                <div
+                  style={{
+                    width: '340px',
+                    height:'500px',
+                    padding: '16px',
+                    background: 'rgba(3, 20, 28, 0.92)',
+                    border: '1px solid #00f0ff',
+                    boxShadow: '0 0 20px rgba(0, 240, 255, 0.4)',
+                    borderRadius: '4px',
+                    color: '#00f0ff',
+                    fontFamily: 'monospace',
+                    backdropFilter: 'blur(6px)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      fontWeight: 'bold',
+                      borderBottom: '1px dashed rgba(0, 240, 255, 0.5)',
+                      paddingBottom: '6px',
+                      marginBottom: '10px',
+                      color: '#ffffff'
+                    }}
+                  >
+                    {item.title}
+                  </div>
+
+                  {item.image && (
+                    <div
+                      style={{
+                        marginBottom: '10px',
+                        borderRadius: '3px',
+                        overflow: 'hidden',
+                        border: '1px solid rgba(0, 240, 255, 0.4)',
+                        boxShadow: '0 0 10px rgba(0, 240, 255, 0.2)'
+                      }}
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        style={{
+                          width: '100%',
+                          height: '400px',
+                          objectFit: 'fill',
+                          display: 'block',
+                          filter: 'contrast(1.1) brightness(0.9) saturate(1.2)'
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  <p style={{ fontSize: '0.8rem', lineHeight: '1.4', margin: 0, color: '#cceeff' }}>
+                    {item.text}
+                  </p>
+                  <div style={{ fontSize: '0.65rem', color: '#f52d6a', marginTop: '10px', textAlign: 'right' }}>
+                    [ PRESS E TO CLOSE ]
+                  </div>
+                </div>
+              </Html>
+            )}
+          </group>
+        );
+      })}
+    </group>
+  );
+};
+
 const FpsController = () => {
   const { camera, gl } = useThree();
   const controlsRef = useRef();
   const [isLocked, setIsLocked] = useState(false);
+  const [nearNodeId, setNearNodeId] = useState(null);
 
   const { forward, backward, left, right } = usePlayerControls();
   const direction = new THREE.Vector3();
   const speed = 15;
 
-  // Setup PointerLock & Camera Memory
   useEffect(() => {
     const initialPosition = camera.position.clone();
     const initialRotation = camera.rotation.clone();
@@ -70,17 +227,42 @@ const FpsController = () => {
       controls.removeEventListener('unlock', onUnlock);
       controls.dispose();
 
-      // Restore camera when leaving SimPage
       camera.position.copy(initialPosition);
       camera.rotation.copy(initialRotation);
     };
   }, [camera, gl.domElement]);
 
-  // 2D DOM Overlay on document.body
   useEffect(() => {
-    if (isLocked) return;
+    if (isLocked) {
+      if (!nearNodeId) return;
 
-    // Outer full-screen overlay
+      const promptDiv = document.createElement('div');
+      promptDiv.style.cssText = `
+        position: fixed;
+        bottom: 20%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(5, 5, 10, 0.85);
+        padding: 10px 20px;
+        border-radius: 4px;
+        border: 1px solid #00f0ff;
+        color: #00f0ff;
+        font-family: monospace;
+        font-weight: bold;
+        pointer-events: none;
+        z-index: 999999;
+        box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+      `;
+      promptDiv.innerText = '[ E ] INTERACT WITH TERMINAL';
+      document.body.appendChild(promptDiv);
+
+      return () => {
+        if (document.body.contains(promptDiv)) {
+          document.body.removeChild(promptDiv);
+        }
+      };
+    }
+
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position: fixed;
@@ -95,7 +277,6 @@ const FpsController = () => {
       z-index: 999999;
     `;
 
-    // Prompt Box Container
     const box = document.createElement('div');
     box.style.cssText = `
       text-align: center;
@@ -134,7 +315,7 @@ const FpsController = () => {
         document.body.removeChild(overlay);
       }
     };
-  }, [isLocked]);
+  }, [isLocked, nearNodeId]);
 
   useFrame((state, delta) => {
     if (!isLocked) return;
@@ -149,7 +330,7 @@ const FpsController = () => {
     camera.position.y = 2; 
   });
 
-  return null;
+  return <InteractableObjects onNearChange={setNearNodeId} />;
 };
 
 const DynamicBlocks = () => {
@@ -215,10 +396,7 @@ const DynamicBlocks = () => {
       
       <instancedMesh ref={meshWireRef} args={[null, null, count]}>
         <boxGeometry />
-        <meshBasicMaterial 
-          wireframe={true} 
-          toneMapped={false} 
-        />
+        <meshBasicMaterial wireframe={true} toneMapped={false} />
         <instancedBufferAttribute attach="instanceColor" args={[colors, 3]} />
       </instancedMesh>
     </group>
@@ -229,7 +407,7 @@ const SimPage = () => {
   return (
     <>
       <color attach="background" args={['#031A1F']} />
-      <fogExp2 attach="fog" args={['#0a0315', 0.03]} />
+      <fogExp2 attach="fog" args={['#0a0315', 0.035]} />
       
       <Suspense fallback={null}>
         <FpsController />
