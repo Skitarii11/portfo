@@ -48,6 +48,9 @@ const FpsController = () => {
   const speed = 15;
 
   useEffect(() => {
+    const initialPosition = camera.position.clone();
+    const initialRotation = camera.rotation.clone();
+
     const controls = new PointerLockControlsImpl(camera, gl.domElement);
     controlsRef.current = controls;
 
@@ -58,9 +61,16 @@ const FpsController = () => {
     controls.addEventListener('unlock', onUnlock);
 
     return () => {
+      if (document.pointerLockElement) {
+        document.exitPointerLock();
+      }
+
       controls.removeEventListener('lock', onLock);
       controls.removeEventListener('unlock', onUnlock);
       controls.dispose();
+
+      camera.position.copy(initialPosition);
+      camera.rotation.copy(initialRotation);
     };
   }, [camera, gl.domElement]);
 
