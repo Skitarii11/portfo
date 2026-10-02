@@ -1,4 +1,5 @@
 import React, { Suspense, useMemo, useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls.js';
@@ -35,10 +36,128 @@ const INTERACTABLES = [
     title: "// RESUME",
     text: "",
     image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop"
+  },
+  {
+    id: 6,
+    position: [0, 5 , 40],
+    title: "// GO TO WORKS",
+    isPortal: true,
+    navigateTo: "/work"
   }
 ];
 
-// --- 1. Glitch Shader Material ---
+const RedGalaxyPortal = () => {
+  const count = 1800;
+  const arms = 4;
+  const radius = 5.5;
+  const spin = 1.4;
+  const randomnessPower = 3;
+
+  const meshRef = useRef();
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+
+  const { particles, colors } = useMemo(() => {
+    const temp = [];
+    const colorArray = new Float32Array(count * 3);
+    const coreColor = new THREE.Color('#ffffff');
+    const innerColor = new THREE.Color('#ff0055');
+    const outerColor = new THREE.Color('#880022');
+
+    for (let i = 0; i < count; i++) {
+      // denser core
+      const r = Math.pow(Math.random(), 2) * radius;
+      
+      const spinAngle = r * spin;
+      const branchAngle = ((i % arms) / arms) * Math.PI * 2;
+
+      // Random offset dispersion along arms
+      const randomX = Math.pow(Math.random(), randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * (r * 0.25 + 0.1);
+      const randomY = Math.pow(Math.random(), randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * (r * 0.15 + 0.05);
+      const randomZ = Math.pow(Math.random(), randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * (r * 0.25 + 0.1);
+
+      // Cube scale
+      const scale = (1.0 - r / (radius * 1.3)) * 0.07 + 0.025;
+
+      // Differential Orbit Speed: Inner particles orbit exponentially faster than outer ones
+      const orbitSpeed = 0.25 + (1.8 / (r + 0.35));
+
+      // Individual random cube rotation speeds
+      const rotSpeedX = (Math.random() - 0.5) * 1.2;
+      const rotSpeedY = (Math.random() - 0.5) * 1.2;
+      const rotSpeedZ = (Math.random() - 0.5) * 1.2;
+
+      temp.push({ r, spinAngle, branchAngle, randomX, randomY, randomZ, scale, orbitSpeed, rotSpeedX, rotSpeedY, rotSpeedZ });
+
+      // Core-to-Arm Color Gradient Interpolation
+      const mixedColor = innerColor.clone().lerp(outerColor, r / radius);
+      if (r < 0.9) {
+        mixedColor.lerp(coreColor, 1.0 - r / 0.9); // Hot core glow
+      }
+      mixedColor.toArray(colorArray, i * 3);
+    }
+
+    return { particles: temp, colors: colorArray };
+  }, [count, arms, radius, spin, randomnessPower]);
+
+  // Differential Galactic Swirl & Individual Cube Rotations
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+
+    if (meshRef.current) {
+      particles.forEach((p, i) => {
+        // Calculate orbital angle where inner radius orbits faster
+        const currentAngle = p.branchAngle + p.spinAngle + t * p.orbitSpeed;
+
+        const x = Math.cos(currentAngle) * p.r + p.randomX;
+        const z = Math.sin(currentAngle) * p.r + p.randomZ;
+        const y = p.randomY;
+
+        dummy.position.set(x, y, z);
+        dummy.rotation.set(
+          t * p.rotSpeedX,
+          t * p.rotSpeedY,
+          t * p.rotSpeedZ
+        );
+        dummy.scale.setScalar(p.scale);
+        dummy.updateMatrix();
+
+        meshRef.current.setMatrixAt(i, dummy.matrix);
+      });
+      meshRef.current.instanceMatrix.needsUpdate = true;
+    }
+  });
+
+  return (
+    <group>
+      <Html position={[0, 4.2, 0]} center style={{ pointerEvents: 'none' }}>
+        <div style={{
+          background: 'rgba(30, 5, 10, 0.92)',
+          border: '1px solid #ff0055',
+          padding: '6px 14px',
+          borderRadius: '4px',
+          color: '#ff0055',
+          fontFamily: 'monospace',
+          fontSize: '0.85rem',
+          fontWeight: 'bold',
+          letterSpacing: '1px',
+          boxShadow: '0 0 15px rgba(255, 0, 85, 0.5)',
+          whiteSpace: 'nowrap'
+        }}>
+          // WORK_PORTAL
+        </div>
+      </Html>
+
+      <group rotation={[Math.PI / 2, 0, 0]}>
+        <instancedMesh ref={meshRef} args={[null, null, count]}>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshBasicMaterial toneMapped={false} />
+          <instancedBufferAttribute attach="instanceColor" args={[colors, 3]} />
+        </instancedMesh>
+      </group>
+    </group>
+  );
+};
+
 const GlitchBlockMaterial = () => {
   const materialRef = useRef();
 
@@ -104,7 +223,6 @@ const GlitchBlockMaterial = () => {
   );
 };
 
-// --- 2. Interactive Molecular/Constellation Node Graph for SKILLS ---
 const SkillsNodeGraph = ({ text }) => {
   const linesRef = useRef();
   const nodeRefs = useRef([]);
@@ -273,7 +391,6 @@ const EducationSchoolBuilding = ({ title, text }) => {
 
     points.push(new THREE.Vector3(0, 2.0, 0));
     points.push(new THREE.Vector3(0, 2.5, 0));
-
     points.push(new THREE.Vector3(-0.6, -2.0, 1.4));
     points.push(new THREE.Vector3(0.6, -2.0, 1.4));
 
@@ -292,7 +409,7 @@ const EducationSchoolBuilding = ({ title, text }) => {
 
   useFrame((state, delta) => {
     if (progressRef.current < 1) {
-      progressRef.current = Math.min(1, progressRef.current + delta * 0.5);
+      progressRef.current = Math.min(1, progressRef.current + delta * 1.2);
     }
 
     const ease = 1 - Math.pow(1 - progressRef.current, 3);
@@ -352,6 +469,7 @@ const EducationSchoolBuilding = ({ title, text }) => {
           </div>
         </div>
       </Html>
+
       <instancedMesh ref={meshRef} args={[null, null, targetPositions.length]}>
         <boxGeometry />
         <meshBasicMaterial wireframe color="#00f0ff" toneMapped={false} />
@@ -394,6 +512,7 @@ const usePlayerControls = () => {
 };
 
 const InteractableObjects = ({ onNearChange }) => {
+  const navigate = useNavigate();
   const { camera } = useThree();
   const [activeNodes, setActiveNodes] = useState({});
   const nearestRef = useRef(null);
@@ -401,13 +520,21 @@ const InteractableObjects = ({ onNearChange }) => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.code === 'KeyE' && nearestRef.current !== null) {
-        const id = nearestRef.current;
-        setActiveNodes((prev) => ({ ...prev, [id]: !prev[id] }));
+        const currentItem = INTERACTABLES.find((item) => item.id === nearestRef.current);
+
+        if (currentItem?.isPortal) {
+          if (document.pointerLockElement) {
+            document.exitPointerLock();
+          }
+          navigate(currentItem.navigateTo);
+        } else if (currentItem) {
+          setActiveNodes((prev) => ({ ...prev, [currentItem.id]: !prev[currentItem.id] }));
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [navigate]);
 
   useFrame(() => {
     let closestId = null;
@@ -435,10 +562,13 @@ const InteractableObjects = ({ onNearChange }) => {
         const isOpen = activeNodes[item.id];
         const isSkillsNode = item.id === 3 || item.title.includes('SKILLS');
         const isEducationNode = item.id === 4 || item.title.includes('EDUCATION');
+        const isPortalNode = item.isPortal;
 
         return (
           <group key={item.id} position={item.position}>
-            {!isOpen && (
+            {isPortalNode && <RedGalaxyPortal />}
+
+            {!isOpen && !isPortalNode && (
               <group>
                 <mesh>
                   <boxGeometry args={[4, 10, 4]} />
@@ -459,7 +589,7 @@ const InteractableObjects = ({ onNearChange }) => {
               <EducationSchoolBuilding title={item.title} text={item.text} />
             )}
 
-            {isOpen && !isSkillsNode && !isEducationNode && (
+            {isOpen && !isSkillsNode && !isEducationNode && !isPortalNode && (
               <Html
                 transform
                 distanceFactor={6}
@@ -579,6 +709,9 @@ const FpsController = () => {
     if (isLocked) {
       if (!nearNodeId) return;
 
+      const currentItem = INTERACTABLES.find((item) => item.id === nearNodeId);
+      const isPortal = currentItem?.isPortal;
+
       const promptDiv = document.createElement('div');
       promptDiv.style.cssText = `
         position: fixed;
@@ -588,15 +721,15 @@ const FpsController = () => {
         background: rgba(5, 5, 10, 0.85);
         padding: 10px 20px;
         border-radius: 4px;
-        border: 1px solid #00f0ff;
-        color: #00f0ff;
+        border: 1px solid ${isPortal ? '#ff0055' : '#00f0ff'};
+        color: ${isPortal ? '#ff0055' : '#00f0ff'};
         font-family: monospace;
         font-weight: bold;
         pointer-events: none;
         z-index: 999999;
-        box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        box-shadow: 0 0 15px ${isPortal ? 'rgba(255, 0, 85, 0.4)' : 'rgba(0, 240, 255, 0.3)'};
       `;
-      promptDiv.innerText = '[ E ] INTERACT WITH TERMINAL';
+      promptDiv.innerText = isPortal ? '[ E ] WARP TO WORK PAGE' : '[ E ] INTERACT WITH TERMINAL';
       document.body.appendChild(promptDiv);
 
       return () => {
