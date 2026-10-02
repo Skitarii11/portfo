@@ -8,43 +8,130 @@ import * as THREE from 'three';
 const INTERACTABLES = [
   {
     id: 1,
-    position: [-15, 2, -15],
+    position: [-80, 2, -80],
     title: "// WHO I AM",
     text: "Neural synchronization completed at 98.4%. Primary render matrix online and functioning within nominal cyber-parameters."
   },
   {
     id: 2,
-    position: [15, 2, -20],
+    position: [80, 2, -80],
     title: "// EXPERIENCE",
     text: "Decentralized WebGL graphics pipeline initialized. Real-time procedural geometry streaming across sector 07."
   },
   {
     id: 3,
-    position: [0, 2, -35],
+    position: [0, 2, -80],
     title: "// SKILLS",
     text: "React Three.js Python Git ReactNative TypeScript Node.js Express.js SQL NoSQL RestAPI CI/CD Tanstack Cybersecurity"
   },
   {
     id: 4,
-    position: [-22, 2, 10],
+    position: [-80, 2, 10],
     title: "// EDUCATION",
     text: "B.S. Computer Science & Software Engineering // Focus on WebGL, Cyber Systems & Computer Graphics Architecture."
   },
   {
     id: 5,
-    position: [20, 2, 15],
+    position: [80, 2, 15],
     title: "// RESUME",
     text: "",
     image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop"
   },
   {
     id: 6,
-    position: [0, 5 , 40],
+    position: [0, 5 , 80],
     title: "// GO TO WORKS",
     isPortal: true,
     navigateTo: "/work"
   }
 ];
+
+const ProjectileTrail = ({ projectile }) => {
+  const groupRef = useRef();
+  const trailCount = 6;
+
+  useFrame((state) => {
+    if (!groupRef.current) return;
+    const now = state.clock.elapsedTime;
+    const progress = Math.min(1, (now - projectile.startTime) / projectile.duration);
+
+    const children = groupRef.current.children;
+    for (let i = 0; i < children.length; i++) {
+      const delayOffset = i * 0.03;
+      const clampedProgress = Math.max(0, Math.min(1, progress - delayOffset));
+
+      const currentPos = new THREE.Vector3().lerpVectors(
+        projectile.origin,
+        projectile.target,
+        clampedProgress
+      );
+
+      children[i].position.copy(currentPos);
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      {Array.from({ length: trailCount }).map((_, i) => {
+        const isLead = i === 0;
+        const opacity = Math.max(0.05, 1 - i * 0.16);
+        const scale = 0.1 * (1 - i * 0.12);
+
+        return (
+          <mesh key={i}>
+            <boxGeometry args={[scale, scale, scale]} />
+            <meshBasicMaterial
+              color={projectile.isPortal ? '#ff0055' : '#00f0ff'}
+              transparent
+              opacity={opacity}
+              wireframe={!isLead}
+              toneMapped={false}
+            />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+};
+
+const DataStreamProjectiles = () => {
+  const { camera } = useThree();
+  const [projectiles, setProjectiles] = useState([]);
+  const lastSpawnTime = useRef(0);
+
+  useFrame((state) => {
+    const now = state.clock.elapsedTime;
+
+    if (now - lastSpawnTime.current >= 3.0) {
+      lastSpawnTime.current = now;
+
+      const origin = camera.position.clone();
+      origin.y -= 0.5;
+
+      const newBatch = INTERACTABLES.map((item) => ({
+        id: `${now}-${item.id}`,
+        origin: origin.clone(),
+        target: new THREE.Vector3(...item.position),
+        startTime: now,
+        duration: 2,
+        isPortal: item.isPortal,
+      }));
+
+      setProjectiles((prev) => [
+        ...prev.filter((p) => now - p.startTime < p.duration),
+        ...newBatch,
+      ]);
+    }
+  });
+
+  return (
+    <group>
+      {projectiles.map((p) => (
+        <ProjectileTrail key={p.id} projectile={p} />
+      ))}
+    </group>
+  );
+};
 
 const RedGalaxyPortal = () => {
   const count = 1800;
@@ -887,6 +974,7 @@ const SimPage = () => {
       
       <Suspense fallback={null}>
         <FpsController />
+        <DataStreamProjectiles />
         <DynamicBlocks />
       </Suspense>
     </>
