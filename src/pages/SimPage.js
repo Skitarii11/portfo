@@ -27,7 +27,7 @@ const INTERACTABLES = [
     id: 4,
     position: [-22, 2, 10],
     title: "// EDUCATION",
-    text: "Quantum state vectors stable. Shaders compiling across grid coordinates with minimal fragment distortion."
+    text: "B.S. Computer Science & Software Engineering // Focus on WebGL, Cyber Systems & Computer Graphics Architecture."
   },
   {
     id: 5,
@@ -38,6 +38,7 @@ const INTERACTABLES = [
   }
 ];
 
+// --- 1. Glitch Shader Material ---
 const GlitchBlockMaterial = () => {
   const materialRef = useRef();
 
@@ -67,35 +68,25 @@ const GlitchBlockMaterial = () => {
 
         void main() {
           vec2 uv = vUv;
-          
           float t = floor(uTime * 15.0); 
-
           float isGlitching = step(0.85, random(vec2(t * 0.05, 0.0))); 
-          
           float bandY = floor(uv.y * 40.0);
           float bandOffset = (random(vec2(bandY, t)) - 0.5) * 0.15;
-          
           uv.x += bandOffset * isGlitching;
 
           float rgbShift = 0.02 * random(vec2(bandY, t * 2.0)) * isGlitching;
-          
           vec3 baseColor = vec3(0.02, 0.03, 0.03); 
-          
           vec2 grid = floor(uv * vec2(50.0, 80.0));
           
           float rBlock = step(0.95, random(floor(vec2(uv.x + rgbShift, uv.y) * vec2(50.0, 80.0)) + t));
           float gBlock = step(0.95, random(grid + t));
           float bBlock = step(0.95, random(floor(vec2(uv.x - rgbShift, uv.y) * vec2(50.0, 80.0)) + t));
           
-          vec3 blockColor = vec3(rBlock, gBlock, bBlock);
-          blockColor *= vec3(0.39, 1.0, 0.85); // Cyan tint
-
-          float scanline = sin(vUv.y * 1000.0) * 0.05;
-          
+          vec3 blockColor = vec3(rBlock, gBlock, bBlock) * vec3(0.39, 1.0, 0.85);
+          float scanline = sin(vUv.y * 1000.0) * 0.03;
           vec3 finalColor = baseColor + (blockColor * 0.8 * isGlitching) - scanline;
-          
           float flash = step(0.98, random(vec2(bandY, t))) * isGlitching;
-          finalColor += vec3(0.988, 0.176, 0.369) * flash * 0.6; 
+          finalColor += vec3(0.39, 1.0, 0.85) * flash * 0.6; 
           
           gl_FragColor = vec4(finalColor, 1.0);
         }
@@ -113,9 +104,11 @@ const GlitchBlockMaterial = () => {
   );
 };
 
+// --- 2. Interactive Molecular/Constellation Node Graph for SKILLS ---
 const SkillsNodeGraph = ({ text }) => {
   const linesRef = useRef();
   const nodeRefs = useRef([]);
+
   const { nodes, connections, initialLinePositions } = useMemo(() => {
     const skills = text.split(' ');
     const count = skills.length;
@@ -156,6 +149,7 @@ const SkillsNodeGraph = ({ text }) => {
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
+
     nodes.forEach((node, idx) => {
       node.currentPos.x = node.basePos.x + Math.sin(t * node.speed + node.phase) * 0.35;
       node.currentPos.y = node.basePos.y + Math.cos(t * node.speed * 0.8 + node.phase) * 0.35;
@@ -202,7 +196,7 @@ const SkillsNodeGraph = ({ text }) => {
           boxShadow: '0 0 15px rgba(0,240,255,0.4)',
           whiteSpace: 'nowrap'
         }}>
-          // SKILLS_MATRIX [ PRESS E TO CLOSE ]
+          // SKILLS_MATRIX
         </div>
       </Html>
 
@@ -217,6 +211,7 @@ const SkillsNodeGraph = ({ text }) => {
         </bufferGeometry>
         <lineBasicMaterial color="#00f0ff" transparent opacity={0.5} />
       </lineSegments>
+
       {nodes.map((node, idx) => (
         <group
           key={node.id}
@@ -227,6 +222,7 @@ const SkillsNodeGraph = ({ text }) => {
             <boxGeometry args={[0.35, 0.35, 0.35]} />
             <meshBasicMaterial wireframe color="#00f0ff" />
           </mesh>
+
           <Html center distanceFactor={8} style={{ pointerEvents: 'none' }}>
             <div style={{
               background: 'rgba(5, 15, 25, 0.95)',
@@ -246,6 +242,120 @@ const SkillsNodeGraph = ({ text }) => {
           </Html>
         </group>
       ))}
+    </group>
+  );
+};
+
+const EducationSchoolBuilding = ({ title, text }) => {
+  const meshRef = useRef();
+  const progressRef = useRef(0);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+
+  const targetPositions = useMemo(() => {
+    const points = [];
+    const step = 0.5;
+
+    for (let x = -2.5; x <= 2.5; x += step) {
+      for (let y = -2.0; y <= -0.5; y += step) {
+        for (let z = -1.0; z <= 1.0; z += step) {
+          points.push(new THREE.Vector3(x, y, z));
+        }
+      }
+    }
+
+    for (let y = 0.0; y <= 1.5; y += step) {
+      for (let x = -0.8; x <= 0.8; x += step) {
+        for (let z = -0.8; z <= 0.8; z += step) {
+          points.push(new THREE.Vector3(x, y, z));
+        }
+      }
+    }
+
+    points.push(new THREE.Vector3(0, 2.0, 0));
+    points.push(new THREE.Vector3(0, 2.5, 0));
+
+    points.push(new THREE.Vector3(-0.6, -2.0, 1.4));
+    points.push(new THREE.Vector3(0.6, -2.0, 1.4));
+
+    return points;
+  }, []);
+
+  const scatterPositions = useMemo(() => {
+    return targetPositions.map(() => {
+      return new THREE.Vector3(
+        (Math.random() - 0.5) * 18,
+        (Math.random() - 0.5) * 14,
+        (Math.random() - 0.5) * 18
+      );
+    });
+  }, [targetPositions]);
+
+  useFrame((state, delta) => {
+    if (progressRef.current < 1) {
+      progressRef.current = Math.min(1, progressRef.current + delta * 0.5);
+    }
+
+    const ease = 1 - Math.pow(1 - progressRef.current, 3);
+
+    targetPositions.forEach((target, i) => {
+      const start = scatterPositions[i];
+      dummy.position.lerpVectors(start, target, ease);
+      dummy.rotation.set((1 - ease) * Math.PI, (1 - ease) * Math.PI, 0);
+      dummy.scale.setScalar(0.42 * ease);
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
+    });
+
+    meshRef.current.instanceMatrix.needsUpdate = true;
+  });
+
+  return (
+    <group>
+      <Html
+        transform
+        distanceFactor={6}
+        position={[0, 4.2, 0]}
+        style={{ pointerEvents: 'none' }}
+      >
+        <div
+          style={{
+            width: '340px',
+            maxHeight: '130px',
+            padding: '12px 16px',
+            background: 'rgba(3, 20, 28, 0.92)',
+            border: '1px solid #00f0ff',
+            boxShadow: '0 0 20px rgba(0, 240, 255, 0.4)',
+            borderRadius: '4px',
+            color: '#00f0ff',
+            fontFamily: 'monospace',
+            backdropFilter: 'blur(6px)',
+            boxSizing: 'border-box'
+          }}
+        >
+          <div
+            style={{
+              fontSize: '0.85rem',
+              fontWeight: 'bold',
+              borderBottom: '1px dashed rgba(0, 240, 255, 0.5)',
+              paddingBottom: '4px',
+              marginBottom: '6px',
+              color: '#ffffff'
+            }}
+          >
+            {title}
+          </div>
+          <p style={{ fontSize: '0.75rem', lineHeight: '1.3', margin: 0, color: '#cceeff' }}>
+            {text}
+          </p>
+          <div style={{ fontSize: '0.65rem', color: '#f52d6a', marginTop: '6px', textAlign: 'right' }}>
+            [ PRESS E TO CLOSE ]
+          </div>
+        </div>
+      </Html>
+      <instancedMesh ref={meshRef} args={[null, null, targetPositions.length]}>
+        <boxGeometry />
+        <meshBasicMaterial wireframe color="#00f0ff" toneMapped={false} />
+      </instancedMesh>
     </group>
   );
 };
@@ -324,6 +434,7 @@ const InteractableObjects = ({ onNearChange }) => {
       {INTERACTABLES.map((item) => {
         const isOpen = activeNodes[item.id];
         const isSkillsNode = item.id === 3 || item.title.includes('SKILLS');
+        const isEducationNode = item.id === 4 || item.title.includes('EDUCATION');
 
         return (
           <group key={item.id} position={item.position}>
@@ -344,7 +455,11 @@ const InteractableObjects = ({ onNearChange }) => {
               <SkillsNodeGraph text={item.text} />
             )}
 
-            {isOpen && !isSkillsNode && (
+            {isOpen && isEducationNode && (
+              <EducationSchoolBuilding title={item.title} text={item.text} />
+            )}
+
+            {isOpen && !isSkillsNode && !isEducationNode && (
               <Html
                 transform
                 distanceFactor={6}
@@ -624,7 +739,7 @@ const DynamicBlocks = () => {
       
       <instancedMesh ref={meshWireRef} args={[null, null, count]}>
         <boxGeometry />
-        <meshBasicMaterial wireframe={true} toneMapped={false} />
+        <meshBasicMaterial wireframe toneMapped={false} />
         <instancedBufferAttribute attach="instanceColor" args={[colors, 3]} />
       </instancedMesh>
     </group>
