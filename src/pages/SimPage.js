@@ -10,6 +10,7 @@ import { FreeHumanSkull } from '../components/3D/Free_human_skull';
 import { HoustonCityHall } from '../components/3D/Houston_city_hall';
 import { LampPost } from '../components/3D/Lamp_post';
 import { SurveillanceRoom } from '../components/3D/Surveillance_room';
+import { CyberPulse } from '../components/3D/Cyber_pulse';
 
 const INTERACTABLES = [
   {
@@ -52,12 +53,10 @@ const INTERACTABLES = [
   }
 ];
 
-// --- 1. Proximity-Based Wrapper for Custom JSX Components ---
 const ProximityModel = ({ children, nodePos, offset = [0, 0, 0], scale = 1, rotation = [0, 0, 0], triggerDist = 35 }) => {
   const { camera } = useThree();
   const groupRef = useRef();
 
-  // Calculate final placement coordinates relative to the node
   const targetPos = useMemo(() => [
     nodePos[0] + offset[0],
     nodePos[1] + offset[1],
@@ -68,8 +67,6 @@ const ProximityModel = ({ children, nodePos, offset = [0, 0, 0], scale = 1, rota
     if (!groupRef.current) return;
     const dist = camera.position.distanceTo(new THREE.Vector3(...nodePos));
     const isNear = dist < triggerDist;
-
-    // Smoothly lerp scale between 0 and target scale when player enters proximity
     const targetScale = isNear ? scale : 0.0001;
     groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.08);
   });
@@ -114,6 +111,15 @@ const ProximityModelsManager = () => {
         rotation={[0, -Math.PI / 3, 0]}
       >
         <SurveillanceRoom />
+      </ProximityModel>
+
+      <ProximityModel 
+        nodePos={[0, 2, -80]} 
+        offset={[0, -3, 0]}
+        scale={5}
+        rotation={[0, 0, 0]}
+      >
+        <CyberPulse />
       </ProximityModel>
 
       <ProximityModel 
@@ -223,7 +229,6 @@ const DataStreamProjectiles = () => {
   );
 };
 
-// --- 3. Swirling Red Cube Spiral Galaxy Component ---
 const RedGalaxyPortal = () => {
   const count = 1800;
   const arms = 4;
@@ -297,25 +302,9 @@ const RedGalaxyPortal = () => {
 
   return (
     <group>
-      <Html position={[0, 4.2, 0]} center style={{ pointerEvents: 'none' }}>
-        <div style={{
-          background: 'rgba(30, 5, 10, 0.92)',
-          border: '1px solid #ff0055',
-          padding: '6px 14px',
-          borderRadius: '4px',
-          color: '#ff0055',
-          fontFamily: 'monospace',
-          fontSize: '0.85rem',
-          fontWeight: 'bold',
-          letterSpacing: '1px',
-          boxShadow: '0 0 15px rgba(255, 0, 85, 0.5)',
-          whiteSpace: 'nowrap'
-        }}>
-          // WORK_PORTAL [ PRESS E TO WARP ]
-        </div>
-      </Html>
+      <CyberPulse customColor="#ff0055" scale={5} position={[0, 0, 0]} rotation={[29.85, 0, 0]} />
 
-      <group rotation={[Math.PI / 2.8, 0, 0]}>
+      <group rotation={[Math.PI / 2, 0, 0]}>
         <instancedMesh ref={meshRef} args={[null, null, count]}>
           <boxGeometry args={[1, 1, 1]} />
           <meshBasicMaterial toneMapped={false} />
@@ -326,7 +315,6 @@ const RedGalaxyPortal = () => {
   );
 };
 
-// --- 4. Glitch Shader Material ---
 const GlitchBlockMaterial = () => {
   const materialRef = useRef();
 
@@ -392,7 +380,6 @@ const GlitchBlockMaterial = () => {
   );
 };
 
-// --- 5. Interactive Molecular Graph for SKILLS ---
 const SkillsNodeGraph = ({ text }) => {
   const linesRef = useRef();
   const nodeRefs = useRef([]);
@@ -484,7 +471,7 @@ const SkillsNodeGraph = ({ text }) => {
           boxShadow: '0 0 15px rgba(0,240,255,0.4)',
           whiteSpace: 'nowrap'
         }}>
-          // SKILLS_MATRIX [ PRESS E TO CLOSE ]
+          // SKILLS_MATRIX
         </div>
       </Html>
 
@@ -534,7 +521,6 @@ const SkillsNodeGraph = ({ text }) => {
   );
 };
 
-// --- 6. Interactive Voxel School Assembly for EDUCATION ---
 const EducationSchoolBuilding = ({ title, text }) => {
   const meshRef = useRef();
   const progressRef = useRef(0);
@@ -649,7 +635,6 @@ const EducationSchoolBuilding = ({ title, text }) => {
   );
 };
 
-// --- 7. Player Controls Hook ---
 const usePlayerControls = () => {
   const [movement, setMovement] = useState({ forward: false, backward: false, left: false, right: false });
   
@@ -683,7 +668,6 @@ const usePlayerControls = () => {
   return movement;
 };
 
-// --- 8. Interactable Objects Manager ---
 const InteractableObjects = ({ onNearChange }) => {
   const navigate = useNavigate();
   const { camera } = useThree();
@@ -841,7 +825,6 @@ const InteractableObjects = ({ onNearChange }) => {
   );
 };
 
-// --- 9. First Person Controller ---
 const FpsController = () => {
   const { camera, gl } = useThree();
   const controlsRef = useRef();
@@ -983,7 +966,6 @@ const FpsController = () => {
   return <InteractableObjects onNearChange={setNearNodeId} />;
 };
 
-// --- 10. Dynamic Background Grid Blocks ---
 const DynamicBlocks = () => {
   const gridSize = 80;
   const count = gridSize * gridSize * 2;
@@ -1054,7 +1036,6 @@ const DynamicBlocks = () => {
   );
 };
 
-// --- Main SimPage Component ---
 const SimPage = () => {
   return (
     <>
