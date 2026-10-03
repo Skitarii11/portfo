@@ -1,9 +1,15 @@
-import React, { Suspense, useMemo, useRef, useState, useEffect } from 'react';
+import { Suspense, useMemo, useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls.js';
 import * as THREE from 'three';
+
+import { AdamStylised } from '../components/3D/Adam_stylised';
+import { FreeHumanSkull } from '../components/3D/Free_human_skull';
+import { HoustonCityHall } from '../components/3D/Houston_city_hall';
+import { LampPost } from '../components/3D/Lamp_post';
+import { SurveillanceRoom } from '../components/3D/Surveillance_room';
 
 const INTERACTABLES = [
   {
@@ -39,12 +45,96 @@ const INTERACTABLES = [
   },
   {
     id: 6,
-    position: [0, 5 , 80],
+    position: [0, 5, 80],
     title: "// GO TO WORKS",
     isPortal: true,
     navigateTo: "/work"
   }
 ];
+
+// --- 1. Proximity-Based Wrapper for Custom JSX Components ---
+const ProximityModel = ({ children, nodePos, offset = [0, 0, 0], scale = 1, rotation = [0, 0, 0], triggerDist = 35 }) => {
+  const { camera } = useThree();
+  const groupRef = useRef();
+
+  // Calculate final placement coordinates relative to the node
+  const targetPos = useMemo(() => [
+    nodePos[0] + offset[0],
+    nodePos[1] + offset[1],
+    nodePos[2] + offset[2]
+  ], [nodePos, offset]);
+
+  useFrame(() => {
+    if (!groupRef.current) return;
+    const dist = camera.position.distanceTo(new THREE.Vector3(...nodePos));
+    const isNear = dist < triggerDist;
+
+    // Smoothly lerp scale between 0 and target scale when player enters proximity
+    const targetScale = isNear ? scale : 0.0001;
+    groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.08);
+  });
+
+  return (
+    <group ref={groupRef} position={targetPos} rotation={rotation} scale={[0.0001, 0.0001, 0.0001]}>
+      {children}
+    </group>
+  );
+};
+
+const ProximityModelsManager = () => {
+  return (
+    <group>
+      <ambientLight intensity={1.2} />
+      <directionalLight position={[20, 40, 20]} intensity={2.5} color="#00f0ff" />
+      <pointLight position={[-80, 15, -80]} intensity={8} color="#ff0055" distance={50} />
+      <pointLight position={[80, 15, -80]} intensity={8} color="#00f0ff" distance={50} />
+
+      <ProximityModel 
+        nodePos={[-80, 2, -80]} 
+        offset={[-5, -2, 2]} 
+        scale={2.2} 
+        rotation={[0, Math.PI / 4, 0]}
+      >
+        <AdamStylised />
+      </ProximityModel>
+      
+      <ProximityModel 
+        nodePos={[-80, 2, -80]} 
+        offset={[4, 3, 0]} 
+        scale={0.01} 
+        rotation={[0, -Math.PI / 3, 0]}
+      >
+        <FreeHumanSkull />
+      </ProximityModel>
+
+      <ProximityModel 
+        nodePos={[80, 5, -80]} 
+        offset={[5, -2, -5]} 
+        scale={1.5}
+        rotation={[0, -Math.PI / 3, 0]}
+      >
+        <SurveillanceRoom />
+      </ProximityModel>
+
+      <ProximityModel 
+        nodePos={[-80, 2, 10]} 
+        offset={[-10, -1, -12]} 
+        scale={100} 
+        rotation={[0, Math.PI / 6, 0]}
+      >
+        <HoustonCityHall />
+      </ProximityModel>
+      
+      <ProximityModel 
+        nodePos={[-80, 2, 10]} 
+        offset={[6, -3, -6]} 
+        scale={1.2}
+      >
+        <LampPost />
+      </ProximityModel>
+    </group>
+  );
+};
 
 const ProjectileTrail = ({ projectile }) => {
   const groupRef = useRef();
@@ -57,7 +147,7 @@ const ProjectileTrail = ({ projectile }) => {
 
     const children = groupRef.current.children;
     for (let i = 0; i < children.length; i++) {
-      const delayOffset = i * 0.03;
+      const delayOffset = i * 0.025;
       const clampedProgress = Math.max(0, Math.min(1, progress - delayOffset));
 
       const currentPos = new THREE.Vector3().lerpVectors(
@@ -75,7 +165,7 @@ const ProjectileTrail = ({ projectile }) => {
       {Array.from({ length: trailCount }).map((_, i) => {
         const isLead = i === 0;
         const opacity = Math.max(0.05, 1 - i * 0.16);
-        const scale = 0.1 * (1 - i * 0.12);
+        const scale = 0.45 * (1 - i * 0.12);
 
         return (
           <mesh key={i}>
@@ -113,7 +203,7 @@ const DataStreamProjectiles = () => {
         origin: origin.clone(),
         target: new THREE.Vector3(...item.position),
         startTime: now,
-        duration: 2,
+        duration: 1.4,
         isPortal: item.isPortal,
       }));
 
@@ -133,6 +223,7 @@ const DataStreamProjectiles = () => {
   );
 };
 
+// --- 3. Swirling Red Cube Spiral Galaxy Component ---
 const RedGalaxyPortal = () => {
   const count = 1800;
   const arms = 4;
@@ -151,34 +242,26 @@ const RedGalaxyPortal = () => {
     const outerColor = new THREE.Color('#880022');
 
     for (let i = 0; i < count; i++) {
-      // denser core
       const r = Math.pow(Math.random(), 2) * radius;
-      
       const spinAngle = r * spin;
       const branchAngle = ((i % arms) / arms) * Math.PI * 2;
 
-      // Random offset dispersion along arms
       const randomX = Math.pow(Math.random(), randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * (r * 0.25 + 0.1);
       const randomY = Math.pow(Math.random(), randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * (r * 0.15 + 0.05);
       const randomZ = Math.pow(Math.random(), randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * (r * 0.25 + 0.1);
 
-      // Cube scale
       const scale = (1.0 - r / (radius * 1.3)) * 0.07 + 0.025;
-
-      // Differential Orbit Speed: Inner particles orbit exponentially faster than outer ones
       const orbitSpeed = 0.25 + (1.8 / (r + 0.35));
 
-      // Individual random cube rotation speeds
       const rotSpeedX = (Math.random() - 0.5) * 1.2;
       const rotSpeedY = (Math.random() - 0.5) * 1.2;
       const rotSpeedZ = (Math.random() - 0.5) * 1.2;
 
       temp.push({ r, spinAngle, branchAngle, randomX, randomY, randomZ, scale, orbitSpeed, rotSpeedX, rotSpeedY, rotSpeedZ });
 
-      // Core-to-Arm Color Gradient Interpolation
       const mixedColor = innerColor.clone().lerp(outerColor, r / radius);
       if (r < 0.9) {
-        mixedColor.lerp(coreColor, 1.0 - r / 0.9); // Hot core glow
+        mixedColor.lerp(coreColor, 1.0 - r / 0.9);
       }
       mixedColor.toArray(colorArray, i * 3);
     }
@@ -186,13 +269,11 @@ const RedGalaxyPortal = () => {
     return { particles: temp, colors: colorArray };
   }, [count, arms, radius, spin, randomnessPower]);
 
-  // Differential Galactic Swirl & Individual Cube Rotations
   useFrame((state) => {
     const t = state.clock.elapsedTime;
 
     if (meshRef.current) {
       particles.forEach((p, i) => {
-        // Calculate orbital angle where inner radius orbits faster
         const currentAngle = p.branchAngle + p.spinAngle + t * p.orbitSpeed;
 
         const x = Math.cos(currentAngle) * p.r + p.randomX;
@@ -230,11 +311,11 @@ const RedGalaxyPortal = () => {
           boxShadow: '0 0 15px rgba(255, 0, 85, 0.5)',
           whiteSpace: 'nowrap'
         }}>
-          // WORK_PORTAL
+          // WORK_PORTAL [ PRESS E TO WARP ]
         </div>
       </Html>
 
-      <group rotation={[Math.PI / 2, 0, 0]}>
+      <group rotation={[Math.PI / 2.8, 0, 0]}>
         <instancedMesh ref={meshRef} args={[null, null, count]}>
           <boxGeometry args={[1, 1, 1]} />
           <meshBasicMaterial toneMapped={false} />
@@ -245,6 +326,7 @@ const RedGalaxyPortal = () => {
   );
 };
 
+// --- 4. Glitch Shader Material ---
 const GlitchBlockMaterial = () => {
   const materialRef = useRef();
 
@@ -310,6 +392,7 @@ const GlitchBlockMaterial = () => {
   );
 };
 
+// --- 5. Interactive Molecular Graph for SKILLS ---
 const SkillsNodeGraph = ({ text }) => {
   const linesRef = useRef();
   const nodeRefs = useRef([]);
@@ -401,7 +484,7 @@ const SkillsNodeGraph = ({ text }) => {
           boxShadow: '0 0 15px rgba(0,240,255,0.4)',
           whiteSpace: 'nowrap'
         }}>
-          // SKILLS_MATRIX
+          // SKILLS_MATRIX [ PRESS E TO CLOSE ]
         </div>
       </Html>
 
@@ -451,6 +534,7 @@ const SkillsNodeGraph = ({ text }) => {
   );
 };
 
+// --- 6. Interactive Voxel School Assembly for EDUCATION ---
 const EducationSchoolBuilding = ({ title, text }) => {
   const meshRef = useRef();
   const progressRef = useRef(0);
@@ -565,6 +649,7 @@ const EducationSchoolBuilding = ({ title, text }) => {
   );
 };
 
+// --- 7. Player Controls Hook ---
 const usePlayerControls = () => {
   const [movement, setMovement] = useState({ forward: false, backward: false, left: false, right: false });
   
@@ -598,6 +683,7 @@ const usePlayerControls = () => {
   return movement;
 };
 
+// --- 8. Interactable Objects Manager ---
 const InteractableObjects = ({ onNearChange }) => {
   const navigate = useNavigate();
   const { camera } = useThree();
@@ -755,6 +841,7 @@ const InteractableObjects = ({ onNearChange }) => {
   );
 };
 
+// --- 9. First Person Controller ---
 const FpsController = () => {
   const { camera, gl } = useThree();
   const controlsRef = useRef();
@@ -896,6 +983,7 @@ const FpsController = () => {
   return <InteractableObjects onNearChange={setNearNodeId} />;
 };
 
+// --- 10. Dynamic Background Grid Blocks ---
 const DynamicBlocks = () => {
   const gridSize = 80;
   const count = gridSize * gridSize * 2;
@@ -966,6 +1054,7 @@ const DynamicBlocks = () => {
   );
 };
 
+// --- Main SimPage Component ---
 const SimPage = () => {
   return (
     <>
@@ -974,6 +1063,7 @@ const SimPage = () => {
       
       <Suspense fallback={null}>
         <FpsController />
+        <ProximityModelsManager />
         <DataStreamProjectiles />
         <DynamicBlocks />
       </Suspense>
