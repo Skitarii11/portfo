@@ -22,7 +22,7 @@ function App() {
         </Route>
       </Routes>
 
-      {/* A SECOND, parallel <Routes> block for the HTML content */}
+      {/* A parallel <Routes> block for the HTML content */}
       <Routes>
         <Route path="/" element={<HtmlLayout />}>
           <Route index element={null} /> 

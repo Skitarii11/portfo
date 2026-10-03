@@ -16,7 +16,6 @@
   pointer-events: auto;
 }
 
-/* Dual Screen Grid Layout */
 .work-section {
   display: none;
   justify-content: space-between;
@@ -48,7 +47,6 @@
   padding-bottom: 0.3rem;
 }
 
-/* Left Screen - Project List */
 .project-list {
   display: flex;
   flex-direction: column;
@@ -87,7 +85,6 @@
   font-size: 0.9rem;
 }
 
-/* Right Screen - Project Details */
 .project-details {
   display: flex;
   flex-direction: column;
@@ -147,14 +144,12 @@
   padding-right: 1rem;
 }
 
-/* Right Screen Specific Adjustment */
 .right-panel {
   padding-top: 2.2rem;
   padding-left: 1.5rem;
   padding-right: 2rem;
 }
 
-/* Custom Scrollbar for inner screen panels */
 .screen-panel::-webkit-scrollbar {
   width: 4px;
 }
@@ -179,7 +174,6 @@
   font-family: monospace;
   text-align: center;
   overflow-y: auto;
-  /* Optional CRT effect */
   text-shadow: 0 0 5px rgba(0, 240, 255, 0.7);
 }
 
@@ -204,7 +198,6 @@
   cursor: pointer;
 }
 
-/* Custom scrollbar for 3D screen */
 .screen-inner::-webkit-scrollbar {
   width: 4px;
 }

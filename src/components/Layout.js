@@ -7,6 +7,7 @@ import Header from './UI/Header';
 import Footer from './UI/Footer';
 import SideElements from './UI/SideElements';
 import PixelTransition from './3D/MatrixPlane';
+import { CustomCursor } from './3D/CustomCursor';
 
 const TransitionOverlay = () => {
   const { viewport } = useThree();
@@ -24,7 +25,7 @@ const TransitionOverlay = () => {
       const timer = setTimeout(() => {
         setIsTransitioning(false);
         prevLocation.current = location.pathname;
-      }, 1500); // Duration of the transition
+      }, 1500);
 
       return () => clearTimeout(timer);
     }
@@ -37,13 +38,11 @@ const TransitionOverlay = () => {
       }
       
       if (meshRef.current) {
-        // Position it at a fixed distance in front of the camera
-        const distance = 1.0; // Move it further back to avoid pixelation
+        const distance = 1.0;
         const cameraDir = new THREE.Vector3(0, 0, -1).applyQuaternion(state.camera.quaternion);
         meshRef.current.position.copy(state.camera.position).add(cameraDir.multiplyScalar(distance));
         meshRef.current.quaternion.copy(state.camera.quaternion);
 
-        // Scale to fill viewport at this distance
         const fov = state.camera.fov * (Math.PI / 180);
         const planeHeight = 2 * Math.tan(fov / 2) * distance;
         const planeWidth = planeHeight * (viewport.width / viewport.height);
@@ -69,21 +68,18 @@ const TransitionOverlay = () => {
 const Layout = () => {
   return (
     <div className="app-container">
-      {/* Persistent HTML UI */}
       <div className="ui-overlay">
         <Header />
         <Footer />
       </div>
       <SideElements />
-
-      {/* Persistent 3D Canvas */}
+      <CustomCursor />
       <Canvas gl={{ alpha: true }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 5, 5]} intensity={3} />
         
         <TransitionOverlay />
 
-        {/* Page-specific 3D content will be rendered here by the router */}
         <Outlet />
       </Canvas>
     </div>
