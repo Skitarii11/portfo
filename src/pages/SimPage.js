@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls.js';
+import { Joystick } from 'react-joystick-component';
 import * as THREE from 'three';
+
 
 import { AdamStylised } from '../components/3D/Adam_stylised';
 import { FreeHumanSkull } from '../components/3D/Free_human_skull';
@@ -17,13 +19,13 @@ const INTERACTABLES = [
     id: 1,
     position: [-80, 2, -80],
     title: "// WHO I AM",
-    text: "Neural synchronization completed at 98.4%. Primary render matrix online and functioning within nominal cyber-parameters."
+    text: "Software Engineer with a strong foundation in full-stack development, UI/UX and graphic design. I have experience working on broad range of projects with proven track record of delivering end-to-end digital products through freelance projects and professional roles. I don't limit myself to just web development, I love learning and implementing new creative ideas and technologies such as machine learning, 3D graphics and cyberseurity. "
   },
   {
     id: 2,
     position: [80, 2, -80],
     title: "// EXPERIENCE",
-    text: "Decentralized WebGL graphics pipeline initialized. Real-time procedural geometry streaming across sector 07."
+    text: "April 2021 - September 2021 BZP Imbound. Implemented UI overhaul of 2 client company’s website. Redesigned database architecture of online shopping website under the supervision of a senior Web Developer.September 2023 - January 2025 Browns Lud. Developed company’s business website with modern design. Developed company’s online shopping website that improved online presence and user engagement. Developed warehouse management application that tracks item quantity, buying price, selling price, import fee, delivery fee and total expense, income, profit for company’s internal usage. September 2026 - Now Nasha Tech."
   },
   {
     id: 3,
@@ -35,14 +37,14 @@ const INTERACTABLES = [
     id: 4,
     position: [-80, 2, 10],
     title: "// EDUCATION",
-    text: "B.S. Computer Science & Software Engineering // Focus on WebGL, Cyber Systems & Computer Graphics Architecture."
+    text: "2022 - 2026 B.S. Huree University of Information and Communication Technology"
   },
   {
     id: 5,
     position: [80, 2, 15],
     title: "// RESUME",
     text: "",
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop"
+    image: "./resume.png"
   },
   {
     id: 6,
@@ -754,20 +756,8 @@ const InteractableObjects = ({ onNearChange }) => {
                 style={{ pointerEvents: 'none' }}
               >
                 <div
-                  style={{
-                    width: '340px',
-                    height: '500px',
-                    padding: '16px',
-                    background: 'rgba(3, 20, 28, 0.92)',
-                    border: '1px solid #00f0ff',
-                    boxShadow: '0 0 20px rgba(0, 240, 255, 0.4)',
-                    borderRadius: '4px',
-                    color: '#00f0ff',
-                    fontFamily: 'monospace',
-                    backdropFilter: 'blur(6px)',
-                    boxSizing: 'border-box',
-                    overflowY: 'auto'
-                  }}
+                  className="hologram-terminal" 
+                  style={{ pointerEvents: 'auto' }}
                 >
                   <div
                     style={{
@@ -825,20 +815,93 @@ const InteractableObjects = ({ onNearChange }) => {
   );
 };
 
-const FpsController = () => {
+const MobileControlsOverlay = ({ joystickVector, nearNodeId }) => {
+  const checkMobile = () => window.innerWidth <= 768 || navigator.maxTouchPoints > 0;
+  const [isMobile, setIsMobile] = useState(checkMobile());
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(checkMobile());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (!isMobile) return null;
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none'
+      }}
+    >
+      <div style={{ position: 'absolute', bottom: '40px', left: '40px', pointerEvents: 'auto' }}>
+        <Joystick
+          size={100}
+          baseColor="rgba(3, 20, 28, 0.75)"
+          stickColor="#00f0ff"
+          move={(e) => {
+            joystickVector.current.x = e.x;
+            joystickVector.current.y = e.y;
+          }}
+          stop={() => {
+            joystickVector.current.x = 0;
+            joystickVector.current.y = 0;
+          }}
+        />
+      </div>
+
+      {nearNodeId && (
+        <div style={{ position: 'absolute', bottom: '50px', right: '40px', pointerEvents: 'auto' }}>
+          <button
+            onClick={() => {
+              window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyE' }));
+            }}
+            style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              background: 'rgba(5, 5, 10, 0.85)',
+              border: '2px solid #00f0ff',
+              color: '#00f0ff',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              boxShadow: '0 0 15px rgba(0, 240, 255, 0.4)',
+              cursor: 'pointer'
+            }}
+          >
+            INTERACT
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const FpsController = ({ joystickVector, onNearChange }) => {
   const { camera, gl } = useThree();
   const controlsRef = useRef();
   const [isLocked, setIsLocked] = useState(false);
   const [nearNodeId, setNearNodeId] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768 || 'ontouchstart' in window);
 
   const { forward, backward, left, right } = usePlayerControls();
   const direction = new THREE.Vector3();
   const speed = 15;
 
   useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768 || 'ontouchstart' in window);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
     const initialPosition = camera.position.clone();
     const initialRotation = camera.rotation.clone();
-
     const controls = new PointerLockControlsImpl(camera, gl.domElement);
     controlsRef.current = controls;
 
@@ -849,20 +912,85 @@ const FpsController = () => {
     controls.addEventListener('unlock', onUnlock);
 
     return () => {
-      if (document.pointerLockElement) {
-        document.exitPointerLock();
-      }
-
+      if (document.pointerLockElement) document.exitPointerLock();
       controls.removeEventListener('lock', onLock);
       controls.removeEventListener('unlock', onUnlock);
       controls.dispose();
-
       camera.position.copy(initialPosition);
       camera.rotation.copy(initialRotation);
     };
-  }, [camera, gl.domElement]);
+  }, [camera, gl.domElement, isMobile]);
+
+  useFrame((state, delta) => {
+    if (!isLocked && !isMobile) return;
+
+    let moveX = 0;
+    let moveZ = 0;
+
+    if (isMobile) {
+      moveX = joystickVector.current.x;
+      moveZ = joystickVector.current.y;
+    } else {
+      moveX = Number(right) - Number(left);
+      moveZ = Number(forward) - Number(backward);
+    }
+
+    const length = Math.hypot(moveX, moveZ);
+    if (length > 0) {
+      const factor = length > 1 ? 1 / length : 1;
+      const step = speed * delta * factor;
+
+      camera.translateZ(-moveZ * step);
+      camera.translateX(moveX * step);
+    }
+
+    camera.position.y = 2;
+  });
 
   useEffect(() => {
+    if (!isMobile) return;
+    
+    let isDragging = false;
+    let previousTouch = null;
+
+    const onTouchStart = (e) => {
+      if (e.touches[0].clientY < window.innerHeight * 0.7) {
+        isDragging = true;
+        previousTouch = e.touches[0];
+      }
+    };
+
+    const onTouchMove = (e) => {
+      if (!isDragging || !previousTouch) return;
+      const touch = e.touches[0];
+      
+      const movementX = touch.clientX - previousTouch.clientX;
+      const movementY = touch.clientY - previousTouch.clientY;
+      
+      camera.rotation.y -= movementX * 0.005;
+      camera.rotation.x -= movementY * 0.005;
+      
+      camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x));
+      
+      previousTouch = touch;
+    };
+
+    const onTouchEnd = () => { isDragging = false; previousTouch = null; };
+
+    gl.domElement.addEventListener('touchstart', onTouchStart);
+    gl.domElement.addEventListener('touchmove', onTouchMove);
+    gl.domElement.addEventListener('touchend', onTouchEnd);
+
+    return () => {
+      gl.domElement.removeEventListener('touchstart', onTouchStart);
+      gl.domElement.removeEventListener('touchmove', onTouchMove);
+      gl.domElement.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [camera, gl.domElement, isMobile]);
+
+  useEffect(() => {
+    if (isMobile) return;
+
     if (isLocked) {
       if (!nearNodeId) return;
 
@@ -948,22 +1076,14 @@ const FpsController = () => {
         document.body.removeChild(overlay);
       }
     };
-  }, [isLocked, nearNodeId]);
+  }, [isLocked, nearNodeId, isMobile]);
 
-  useFrame((state, delta) => {
-    if (!isLocked) return;
+  const handleNearChange = (id) => {
+    setNearNodeId(id);
+    if (onNearChange) onNearChange(id);
+  };
 
-    direction.z = Number(forward) - Number(backward);
-    direction.x = Number(right) - Number(left);
-    direction.normalize();
-
-    if (forward || backward) camera.translateZ(-direction.z * speed * delta);
-    if (left || right) camera.translateX(direction.x * speed * delta);
-
-    camera.position.y = 2; 
-  });
-
-  return <InteractableObjects onNearChange={setNearNodeId} />;
+  return <InteractableObjects onNearChange={handleNearChange} />;
 };
 
 const DynamicBlocks = () => {
@@ -1037,13 +1157,31 @@ const DynamicBlocks = () => {
 };
 
 const SimPage = () => {
+  const joystickVector = useRef({ x: 0, y: 0 });
+  const [nearNodeId, setNearNodeId] = useState(null);
   return (
     <>
+      <Html
+        fullscreen
+        calculatePosition={() => [0, 0]}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          pointerEvents: 'none',
+          zIndex: 999999
+        }}
+      >
+        <MobileControlsOverlay joystickVector={joystickVector} nearNodeId={nearNodeId} />
+      </Html>
+      
       <color attach="background" args={['#031A1F']} />
       <fogExp2 attach="fog" args={['#0a0315', 0.035]} />
-      
+        
       <Suspense fallback={null}>
-        <FpsController />
+        <FpsController joystickVector={joystickVector} onNearChange={setNearNodeId} />
         <ProximityModelsManager />
         <DataStreamProjectiles />
         <DynamicBlocks />

@@ -27,8 +27,8 @@ export const CustomCursor = () => {
     };
   }, []);
 
-  if (isLocked) return null;
-
+  const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window;
+  if (isLocked || isMobile) return null;
   return (
     <div
       style={{

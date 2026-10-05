@@ -79,3 +79,26 @@ button,
 [style*="cursor: pointer"] {
   cursor: url('./cursor-pointer.png') 16 16, pointer !important;
 }
+
+.hologram-terminal {
+  width: 340px;
+  height: 500px;
+  max-width: 90vw;
+  max-height: 70vh;
+  padding: 16px;
+  background: rgba(3, 20, 28, 0.92);
+  border: 1px solid #00f0ff;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+  border-radius: 4px;
+  color: #00f0ff;
+  font-family: monospace;
+  backdrop-filter: blur(6px);
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  * {
+    cursor: auto !important;
+  }
+}
