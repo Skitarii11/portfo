@@ -13,7 +13,7 @@ import * as THREE from 'three'
 
 export function CyberPulse({ customColor, ...props }) {
   const group = useRef()
-  const { nodes,scene, materials, animations } = useGLTF('/cyber_pulse.glb')
+  const { nodes,scene, materials, animations } = useGLTF(process.env.PUBLIC_URL+'/cyber_pulse.glb')
   const { actions, names } = useAnimations(animations, group)
 
   useEffect(() => {

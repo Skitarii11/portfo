@@ -12,7 +12,7 @@ import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
 export function FreeHumanSkull(props) {
-  const { nodes, materials } = useGLTF('/free_human_skull-transformed.glb')
+  const { nodes, materials } = useGLTF(process.env.PUBLIC_URL+'/free_human_skull-transformed.glb')
   materials['01_-_Default'].wireframe = true
   materials['01_-_Default'].color.set('#c9e3f3')
   return (

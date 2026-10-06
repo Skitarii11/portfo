@@ -3,7 +3,7 @@ import { useGLTF, Html } from '@react-three/drei'
 import { useNavigate } from 'react-router-dom';
 
 export default function SciFiComputer({ showContent = true, ...props }) {
-  const { nodes, materials } = useGLTF('/sci-fi_computer-transformed.glb')
+  const { nodes, materials } = useGLTF(process.env.PUBLIC_URL+'/sci-fi_computer-transformed.glb')
   
   materials.Carcasa_1.color.set('#818589');
   materials.Carcasa_2.color.set('#818589');

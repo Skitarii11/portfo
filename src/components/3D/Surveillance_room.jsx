@@ -13,7 +13,7 @@ import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 
 export function SurveillanceRoom(props) {
-  const { nodes, materials } = useGLTF('/surveillance_room-transformed.glb')
+  const { nodes, materials } = useGLTF(process.env.PUBLIC_URL+'/surveillance_room-transformed.glb')
   materials.material.wireframe = true
   materials.Shading2_cables.wireframe = true
   materials.Shading1.wireframe = true

@@ -13,7 +13,7 @@ import { useGLTF, useAnimations } from '@react-three/drei'
 
 export default function CyberdeckComputer(props) {
   const group = React.useRef()
-  const { nodes, materials, animations } = useGLTF('/cyberdeck_computer-transformed.glb')
+  const { nodes, materials, animations } = useGLTF(process.env.PUBLIC_URL+'/cyberdeck_computer-transformed.glb')
   const { actions } = useAnimations(animations, group)
 
   materials.Sector7_RasPie.color.set('#818589')

@@ -12,7 +12,7 @@ import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
 export function LampPost(props) {
-  const { nodes, materials } = useGLTF('/lamp_post-transformed.glb')
+  const { nodes, materials } = useGLTF(process.env.PUBLIC_URL+'/lamp_post-transformed.glb')
   materials['Material.001'].wireframe = true
   return (
     <group {...props} dispose={null}>

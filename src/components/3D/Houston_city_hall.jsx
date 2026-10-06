@@ -12,7 +12,7 @@ import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
 export function HoustonCityHall(props) {
-  const { nodes, materials } = useGLTF('/houston_city_hall-transformed.glb')
+  const { nodes, materials } = useGLTF(process.env.PUBLIC_URL+'/houston_city_hall-transformed.glb')
   materials.lambert3.wireframe = true
 
   return (

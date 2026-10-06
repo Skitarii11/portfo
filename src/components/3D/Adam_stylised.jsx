@@ -12,7 +12,7 @@ import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
 export function AdamStylised(props) {
-  const { nodes, materials } = useGLTF('/adam_stylised-transformed.glb')
+  const { nodes, materials } = useGLTF(process.env.PUBLIC_URL+'/adam_stylised-transformed.glb')
   materials.M_Adam_TorsoHead.wireframe = true
   materials.M_Adam_TorsoHead_NoCloth.wireframe = true
   materials.M_Adam_ArmsLegs.wireframe = true
