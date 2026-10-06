@@ -41,4 +41,4 @@ export default function CyberdeckComputer(props) {
   )
 }
 
-useGLTF.preload('/cyberdeck_computer-transformed.glb')
+useGLTF.preload(process.env.PUBLIC_URL+'/cyberdeck_computer-transformed.glb')

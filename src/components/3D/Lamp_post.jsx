@@ -21,4 +21,4 @@ export function LampPost(props) {
   )
 }
 
-useGLTF.preload('/lamp_post-transformed.glb')
+useGLTF.preload(process.env.PUBLIC_URL+'/lamp_post-transformed.glb')

@@ -50,4 +50,4 @@ export default function SciFiComputer({ showContent = true, ...props }) {
   )
 }
 
-useGLTF.preload('/sci-fi_computer-transformed.glb')
+useGLTF.preload(process.env.PUBLIC_URL+'/sci-fi_computer-transformed.glb')

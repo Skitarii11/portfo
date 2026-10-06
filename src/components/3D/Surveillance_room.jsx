@@ -34,4 +34,4 @@ export function SurveillanceRoom(props) {
   )
 }
 
-useGLTF.preload('/surveillance_room-transformed.glb')
+useGLTF.preload(process.env.PUBLIC_URL+'/surveillance_room-transformed.glb')

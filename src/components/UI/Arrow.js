@@ -4,7 +4,7 @@ import { useTexture } from '@react-three/drei';
 
 function Arrow({ position, delay, color="#f52d6a"}) {
   const meshRef = useRef();
-  const texture = useTexture('/arrow.png');
+  const texture = useTexture(process.env.PUBLIC_URL+'/arrow.png');
 
   useFrame(({ clock }) => {
     const time = clock.getElapsedTime();

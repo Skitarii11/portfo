@@ -684,4 +684,4 @@ export function CyberPulse({ customColor, ...props }) {
   )
 }
 
-useGLTF.preload('/cyber_pulse.glb')
+useGLTF.preload(process.env.PUBLIC_URL+'/cyber_pulse.glb')

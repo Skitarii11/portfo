@@ -36,4 +36,4 @@ export function AdamStylised(props) {
   )
 }
 
-useGLTF.preload('/adam_stylised-transformed.glb')
+useGLTF.preload(process.env.PUBLIC_URL+'/adam_stylised-transformed.glb')

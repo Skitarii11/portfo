@@ -22,4 +22,4 @@ export function HoustonCityHall(props) {
   )
 }
 
-useGLTF.preload('/houston_city_hall-transformed.glb')
+useGLTF.preload(process.env.PUBLIC_URL+'/houston_city_hall-transformed.glb')

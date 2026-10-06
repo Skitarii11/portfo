@@ -14,7 +14,7 @@ import { useGLTF } from '@react-three/drei'
 import { SkeletonUtils } from 'three-stdlib'
 
 export default function WireframeMan(props) {
-  const { scene } = useGLTF(process.env.PUBLIC_URL+'/wireframe_man-transformed.glb')
+  const { scene } = useGLTF(process.env.PUBLIC_URL + '/wireframe_man-transformed.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone)
   return (
@@ -25,4 +25,4 @@ export default function WireframeMan(props) {
   )
 }
 
-useGLTF.preload('/wireframe_man-transformed.glb')
+useGLTF.preload(process.env.PUBLIC_URL + '/wireframe_man-transformed.glb')

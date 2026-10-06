@@ -22,4 +22,4 @@ export function FreeHumanSkull(props) {
   )
 }
 
-useGLTF.preload('/free_human_skull-transformed.glb')
+useGLTF.preload(process.env.PUBLIC_URL+'/free_human_skull-transformed.glb')
