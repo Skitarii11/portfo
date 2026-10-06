@@ -11,7 +11,7 @@ import SimPage from './pages/SimPage';
 
 function App() {
    return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       {/* Route for the 3D content, rendered inside the main Layout */}
       <Routes>
         <Route path="/" element={<Layout />}>
